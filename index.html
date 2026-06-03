@@ -765,6 +765,7 @@
     <button class="tab" onclick="switchTab('company')">Company View</button>
     <button class="tab" onclick="switchTab('sector')">Sector Analysis</button>
     <button class="tab active" onclick="switchTab('screener')">Stock Screener</button>
+    <button class="tab" onclick="switchTab('watchlist')">⭐ Watchlist <span id="watchlistCountBadge" style="display:none; background:var(--accent3); color:#fff; border-radius:10px; padding:1px 6px; font-size:10px; margin-left:4px;">0</span></button>
   </div>
 
   <!-- ===== COMPANY TAB ===== -->
@@ -1580,6 +1581,7 @@
               <th onclick="sortScreener(12)">Signal Date</th>
               <th onclick="sortScreener(13)">Signal Return%</th>
               <th onclick="sortScreener(14)">Addon Signal</th>
+              <th style="width:36px;"></th>
             </tr>
           </thead>
           <tbody id="screenerBody" class="pre-render"><tr>
@@ -3189,6 +3191,97 @@
     </div>
   </div>
 
+  <!-- ===== WATCHLIST TAB ===== -->
+  <div id="tab-watchlist" class="tab-content">
+
+    <!-- GUEST PANEL (localStorage, no GitHub) -->
+    <div id="wlGuestPanel" style="display:none;">
+      <div style="padding:16px 0 8px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+        <div>
+          <div style="font-size:16px; font-weight:700; color:var(--text);">⭐ My Watchlist</div>
+          <div style="font-size:12px; color:var(--text2); margin-top:2px;">Saved in this browser only —
+            <span onclick="wlShowConnect()" style="color:var(--accent3); cursor:pointer; text-decoration:underline;">Connect GitHub to sync across devices →</span>
+          </div>
+        </div>
+        <button onclick="clearWatchlist()" style="background:rgba(255,80,80,0.12);border:1px solid rgba(255,80,80,0.3);border-radius:4px;color:#ff6b6b;padding:5px 12px;font-size:11px;cursor:pointer;">🗑 Clear All</button>
+      </div>
+      <div id="watchlistEmptyGuest" style="display:none; padding:48px 0; text-align:center; color:var(--text2);">
+        <div style="font-size:36px; margin-bottom:12px;">📋</div>
+        <div style="font-size:14px; font-weight:600; margin-bottom:6px;">Your watchlist is empty</div>
+        <div style="font-size:12px;">Click the ＋ button next to any stock in the Screener to add it here</div>
+      </div>
+      <div class="scroll-table">
+        <table class="data-table" id="watchlistTableGuest" style="display:none;">
+          <thead><tr>
+            <th>Ticker</th><th>Name</th><th class="screener-hide-mobile">Sector</th>
+            <th>Score</th><th>Signal Date</th><th>Signal Return%</th><th>Addon</th><th style="width:36px;"></th>
+          </tr></thead>
+          <tbody id="watchlistBodyGuest"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- GITHUB CONNECT PANEL -->
+    <div id="wlSetupPanel" style="display:none; max-width:540px; margin:40px auto; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:32px;">
+      <div style="text-align:center; margin-bottom:24px;">
+        <div style="font-size:40px; margin-bottom:10px;">🔗</div>
+        <div style="font-size:17px; font-weight:700; color:var(--text); margin-bottom:8px;">Connect Your GitHub Account</div>
+        <div style="font-size:12px; color:var(--text2); line-height:1.6;">Your watchlist will sync to a private GitHub Gist — accessible from any device. Takes 30 seconds to set up.</div>
+      </div>
+      <div style="background:var(--surface2); border-radius:8px; padding:16px; margin-bottom:20px;">
+        <div style="font-size:12px; font-weight:700; color:var(--text); margin-bottom:10px;">How to get your token:</div>
+        <ol style="font-size:12px; color:var(--text2); line-height:2.2; margin:0; padding-left:18px;">
+          <li>Go to <a href="https://github.com/settings/tokens/new" target="_blank" style="color:var(--accent3);">github.com/settings/tokens/new</a></li>
+          <li>Give it a name e.g. <em>PSX Dashboard</em></li>
+          <li>Set expiration to <strong style="color:var(--text);">No expiration</strong></li>
+          <li>Under scopes, check only <strong style="color:var(--accent3);">gist</strong></li>
+          <li>Click <strong style="color:var(--text);">Generate token</strong> and copy it</li>
+        </ol>
+      </div>
+      <input id="wlTokenInput" type="password" placeholder="Paste your GitHub token here (ghp_...)" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:10px 12px;color:var(--text);font-size:13px;outline:none;margin-bottom:8px;font-family:'DM Mono',monospace;box-sizing:border-box;" onfocus="this.style.borderColor='var(--accent3)'" onblur="this.style.borderColor='var(--border)'">
+      <div id="wlTokenError" style="display:none;color:var(--danger);font-size:11px;margin-bottom:10px;"></div>
+      <button onclick="connectGitHub()" id="wlConnectBtn" style="width:100%;background:var(--accent3);border:none;color:#fff;border-radius:6px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">Connect to GitHub</button>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;">
+        <div style="font-size:11px;color:var(--text2);">Token stored only in your browser — sent only to GitHub's API.</div>
+        <span onclick="wlMode='local';showWatchlistPanel()" style="font-size:11px;color:var(--text2);cursor:pointer;text-decoration:underline;">← Back</span>
+      </div>
+    </div>
+
+    <!-- CONNECTED (GitHub) PANEL -->
+    <div id="wlConnectedPanel" style="display:none;">
+      <div style="padding:16px 0 8px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+        <div>
+          <div style="font-size:16px; font-weight:700; color:var(--text);">⭐ My Watchlist</div>
+          <div style="font-size:12px; color:var(--text2); margin-top:2px;">
+            Synced with GitHub Gist ·
+            <span id="wlUserLabel" style="color:var(--accent3);"></span>
+            <span id="wlSyncStatus" style="margin-left:8px;"></span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button onclick="disconnectGitHub()" style="background:var(--surface2);border:1px solid var(--border);border-radius:4px;color:var(--text2);padding:5px 12px;font-size:11px;cursor:pointer;">Disconnect</button>
+          <button onclick="clearWatchlist()" style="background:rgba(255,80,80,0.12);border:1px solid rgba(255,80,80,0.3);border-radius:4px;color:#ff6b6b;padding:5px 12px;font-size:11px;cursor:pointer;">🗑 Clear All</button>
+        </div>
+      </div>
+      <div id="wlLoading" style="display:none;padding:40px 0;text-align:center;color:var(--text2);font-size:13px;">⏳ Loading your watchlist...</div>
+      <div id="watchlistEmptyGH" style="display:none; padding:48px 0; text-align:center; color:var(--text2);">
+        <div style="font-size:36px; margin-bottom:12px;">📋</div>
+        <div style="font-size:14px; font-weight:600; margin-bottom:6px;">Your watchlist is empty</div>
+        <div style="font-size:12px;">Click the ＋ button next to any stock in the Screener to add it here</div>
+      </div>
+      <div class="scroll-table">
+        <table class="data-table" id="watchlistTableGH" style="display:none;">
+          <thead><tr>
+            <th>Ticker</th><th>Name</th><th class="screener-hide-mobile">Sector</th>
+            <th>Score</th><th>Signal Date</th><th>Signal Return%</th><th>Addon</th><th style="width:36px;"></th>
+          </tr></thead>
+          <tbody id="watchlistBodyGH"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
 </div>
 
 <script>
@@ -3275,6 +3368,7 @@ function init() {
     .filter(d => d.Ticker && d.Ticker !== '0' && d.Ticker !== 0)
     .map(d => ({...d, Ticker: String(d.Ticker), Name: String(d.Name||''), Index: String(d.Index||'')}));
   renderScreener();
+  initWatchlist();
 }
 
 let acIndex = -1;
@@ -3919,6 +4013,269 @@ function toggleFinancials() {
   btn.classList.toggle('active', hiding);
   btn.textContent = hiding ? '📊 Show Financials' : '📊 Hide Financials';
 }
+
+// ===== WATCHLIST — dual mode: localStorage (guest) + GitHub Gist (synced) =====
+const WL_GIST_FILENAME = 'psx_watchlist.json';
+const WL_LOCAL_KEY     = 'psx_watchlist_local';
+let wlToken    = null;
+let wlGistId   = null;
+let wlUsername = null;
+let wlList     = [];
+let wlSaving   = false;
+let wlMode     = 'local'; // 'local' | 'github'
+
+function wlLocalGet(k)    { try { return localStorage.getItem(k); }    catch { return null; } }
+function wlLocalSet(k, v) { try { localStorage.setItem(k, v); }        catch {} }
+function wlLocalDel(k)    { try { localStorage.removeItem(k); }        catch {} }
+
+function wlReadLocal()       { try { return JSON.parse(wlLocalGet(WL_LOCAL_KEY) || '[]'); } catch { return []; } }
+function wlWriteLocal(list)  { wlLocalSet(WL_LOCAL_KEY, JSON.stringify(list)); }
+
+async function initWatchlist() {
+  wlToken  = wlLocalGet('psx_gh_token');
+  wlGistId = wlLocalGet('psx_gh_gist');
+  if (wlToken) {
+    try {
+      const r = await fetch('https://api.github.com/user', {
+        headers: { Authorization: `token ${wlToken}`, Accept: 'application/vnd.github+json' }
+      });
+      if (!r.ok) throw new Error('invalid');
+      const u = await r.json();
+      wlUsername = u.login;
+      wlMode = 'github';
+    } catch {
+      wlToken = null; wlGistId = null; wlUsername = null;
+      wlLocalDel('psx_gh_token'); wlLocalDel('psx_gh_gist');
+      wlMode = 'local';
+    }
+  } else {
+    wlMode = 'local';
+  }
+  if (wlMode === 'local') wlList = wlReadLocal();
+  updateWatchlistBadge();
+}
+
+function showWatchlistPanel() {
+  const setup   = document.getElementById('wlSetupPanel');
+  const github  = document.getElementById('wlConnectedPanel');
+  const guest   = document.getElementById('wlGuestPanel');
+  if (wlMode === 'github') {
+    setup.style.display  = 'none';
+    github.style.display = 'block';
+    guest.style.display  = 'none';
+    document.getElementById('wlUserLabel').textContent = '@' + (wlUsername || '');
+    loadWatchlistFromGist();
+  } else {
+    setup.style.display  = 'none';
+    github.style.display = 'none';
+    guest.style.display  = 'block';
+    wlList = wlReadLocal();
+    updateWatchlistBadge();
+    renderWatchlist('guest');
+  }
+}
+
+function wlShowConnect() {
+  document.getElementById('wlGuestPanel').style.display = 'none';
+  document.getElementById('wlSetupPanel').style.display = 'block';
+}
+
+async function connectGitHub() {
+  const token = document.getElementById('wlTokenInput').value.trim();
+  const errEl = document.getElementById('wlTokenError');
+  const btn   = document.getElementById('wlConnectBtn');
+  errEl.style.display = 'none';
+  if (!token) { errEl.textContent = 'Please paste your token first.'; errEl.style.display = 'block'; return; }
+  btn.textContent = 'Connecting…'; btn.disabled = true;
+  try {
+    const ur = await fetch('https://api.github.com/user', {
+      headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github+json' }
+    });
+    if (!ur.ok) throw new Error('Invalid token — check it was copied correctly.');
+    const user   = await ur.json();
+    const scopes = ur.headers.get('x-oauth-scopes') || '';
+    if (!scopes.includes('gist')) throw new Error('Token is missing "gist" scope. Please regenerate with gist access.');
+    wlToken = token; wlUsername = user.login; wlMode = 'github';
+    wlLocalSet('psx_gh_token', token);
+    await findOrCreateGist();
+    // Migrate local stocks into Gist
+    const local = wlReadLocal();
+    if (local.length > 0) {
+      await loadWatchlistFromGist(true);
+      wlList = [...new Set([...wlList, ...local])];
+      await saveWatchlistToGist();
+      wlWriteLocal([]);
+      showToast(`✓ ${local.length} local stock(s) migrated to GitHub`);
+    }
+    document.getElementById('wlTokenInput').value = '';
+    showWatchlistPanel();
+  } catch(e) {
+    errEl.textContent = '❌ ' + e.message;
+    errEl.style.display = 'block';
+  }
+  btn.textContent = 'Connect to GitHub'; btn.disabled = false;
+}
+
+async function findOrCreateGist() {
+  if (wlGistId) {
+    try {
+      const r = await fetch(`https://api.github.com/gists/${wlGistId}`, { headers: { Authorization: `token ${wlToken}` } });
+      if (r.ok) return;
+    } catch {}
+    wlGistId = null; wlLocalDel('psx_gh_gist');
+  }
+  const r     = await fetch('https://api.github.com/gists?per_page=100', { headers: { Authorization: `token ${wlToken}`, Accept: 'application/vnd.github+json' } });
+  const gists = await r.json();
+  const found = gists.find(g => g.files && g.files[WL_GIST_FILENAME]);
+  if (found) {
+    wlGistId = found.id;
+  } else {
+    const cr = await fetch('https://api.github.com/gists', {
+      method: 'POST',
+      headers: { Authorization: `token ${wlToken}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ description: 'PSX Dashboard Watchlist', public: false, files: { [WL_GIST_FILENAME]: { content: '[]' } } })
+    });
+    const g = await cr.json();
+    wlGistId = g.id;
+  }
+  wlLocalSet('psx_gh_gist', wlGistId);
+}
+
+async function loadWatchlistFromGist(silent = false) {
+  if (!silent) {
+    document.getElementById('wlLoading').style.display        = 'block';
+    document.getElementById('watchlistEmptyGH').style.display = 'none';
+    document.getElementById('watchlistTableGH').style.display = 'none';
+    setSyncStatus('⏳ Syncing…', '#f5a623');
+  }
+  try {
+    if (!wlGistId) await findOrCreateGist();
+    const r = await fetch(`https://api.github.com/gists/${wlGistId}`, {
+      headers: { Authorization: `token ${wlToken}`, Accept: 'application/vnd.github+json' }, cache: 'no-store'
+    });
+    if (!r.ok) throw new Error('Could not load gist');
+    const g = await r.json();
+    wlList = JSON.parse(g.files[WL_GIST_FILENAME]?.content || '[]');
+    if (!silent) { setSyncStatus('✓ Synced', 'var(--positive)'); updateWatchlistBadge(); renderWatchlist('github'); }
+  } catch(e) {
+    if (!silent) { setSyncStatus('⚠ Sync failed', 'var(--danger)'); showToast('Could not load: ' + e.message); }
+  }
+  if (!silent) document.getElementById('wlLoading').style.display = 'none';
+}
+
+async function saveWatchlistToGist() {
+  if (!wlToken || !wlGistId || wlSaving) return;
+  wlSaving = true;
+  setSyncStatus('⏳ Saving…', '#f5a623');
+  try {
+    const r = await fetch(`https://api.github.com/gists/${wlGistId}`, {
+      method: 'PATCH',
+      headers: { Authorization: `token ${wlToken}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ files: { [WL_GIST_FILENAME]: { content: JSON.stringify(wlList) } } })
+    });
+    if (!r.ok) throw new Error('Save failed');
+    setSyncStatus('✓ Saved', 'var(--positive)');
+  } catch(e) {
+    setSyncStatus('⚠ Save failed', 'var(--danger)'); showToast('Could not save: ' + e.message);
+  }
+  wlSaving = false;
+}
+
+function setSyncStatus(msg, color) {
+  const el = document.getElementById('wlSyncStatus');
+  if (el) { el.textContent = msg; el.style.color = color; }
+}
+
+function disconnectGitHub() {
+  if (!confirm('Disconnect from GitHub? Your watchlist stays in the Gist for next time.')) return;
+  wlWriteLocal(wlList); // copy to local so nothing is lost
+  wlToken = null; wlGistId = null; wlUsername = null;
+  wlLocalDel('psx_gh_token'); wlLocalDel('psx_gh_gist');
+  wlMode = 'local';
+  updateWatchlistBadge();
+  showWatchlistPanel();
+  showToast('Disconnected — watchlist copied to browser storage');
+}
+
+async function addToWatchlist(ticker) {
+  ticker = String(ticker);
+  if (wlList.includes(ticker)) { showToast(`${ticker} already in watchlist`); return; }
+  wlList.push(ticker);
+  updateWatchlistBadge();
+  showToast(`⭐ ${ticker} added to watchlist`);
+  if (wlMode === 'github') { renderWatchlist('github'); await saveWatchlistToGist(); }
+  else                     { wlWriteLocal(wlList); renderWatchlist('guest'); }
+}
+
+async function removeFromWatchlist(ticker) {
+  wlList = wlList.filter(t => t !== String(ticker));
+  updateWatchlistBadge();
+  if (wlMode === 'github') { renderWatchlist('github'); await saveWatchlistToGist(); }
+  else                     { wlWriteLocal(wlList); renderWatchlist('guest'); }
+}
+
+async function clearWatchlist() {
+  if (!wlList.length) return;
+  if (!confirm('Clear your entire watchlist?')) return;
+  wlList = [];
+  updateWatchlistBadge();
+  if (wlMode === 'github') { renderWatchlist('github'); await saveWatchlistToGist(); }
+  else                     { wlWriteLocal(wlList); renderWatchlist('guest'); }
+}
+
+function updateWatchlistBadge() {
+  const badge = document.getElementById('watchlistCountBadge');
+  if (!badge) return;
+  badge.style.display = wlList.length > 0 ? 'inline' : 'none';
+  badge.textContent   = wlList.length;
+}
+
+function renderWatchlist(mode) {
+  const emptyId = mode === 'github' ? 'watchlistEmptyGH'    : 'watchlistEmptyGuest';
+  const tableId = mode === 'github' ? 'watchlistTableGH'    : 'watchlistTableGuest';
+  const tbodyId = mode === 'github' ? 'watchlistBodyGH'     : 'watchlistBodyGuest';
+  const empty = document.getElementById(emptyId);
+  const table = document.getElementById(tableId);
+  const tbody = document.getElementById(tbodyId);
+  if (!tbody) return;
+  if (wlList.length === 0) { empty.style.display = 'block'; table.style.display = 'none'; tbody.innerHTML = ''; return; }
+  empty.style.display = 'none'; table.style.display = '';
+  tbody.innerHTML = '';
+  wlList.forEach(ticker => {
+    const d  = SOURCE_DATA.find(r => String(r.Ticker) === ticker);
+    const tr = document.createElement('tr');
+    if (!d) {
+      tr.innerHTML = `<td class="ticker-link" onclick="switchTab('company');pickTicker('${ticker}')">${ticker}</td><td colspan="6" style="color:var(--text2);font-size:12px;">Data not available</td><td><button onclick="removeFromWatchlist('${ticker}')" style="background:rgba(255,80,80,0.1);border:1px solid rgba(255,80,80,0.25);border-radius:4px;color:#ff6b6b;width:26px;height:26px;cursor:pointer;font-size:14px;line-height:1;padding:0;">✕</button></td>`;
+    } else {
+      const score  = d['total improvement'];
+      const ret    = toNum(dget(d, 'Signal Return %'));
+      const retStr = ret != null ? (ret >= 0 ? '+' : '') + ret.toFixed(1) + '%' : '—';
+      tr.innerHTML = `
+        <td class="ticker-link" onclick="switchTab('company');pickTicker('${ticker}')">${ticker}</td>
+        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis">${d.Name||'—'}</td>
+        <td class="screener-hide-mobile" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;color:var(--text2)">${d.Sector||'—'}</td>
+        <td class="mono"><span class="pill ${score>=80?'pill-good':score>=50?'pill-neutral':'pill-bad'}">${score!=null?score:'—'}</span></td>
+        <td class="mono">${dget(d,'Signal date')||'—'}</td>
+        <td class="mono ${valColor(ret)}">${retStr}</td>
+        <td class="mono">${dget(d,'Addon Signal')||'—'}</td>
+        <td><button onclick="removeFromWatchlist('${ticker}')" title="Remove" style="background:rgba(255,80,80,0.1);border:1px solid rgba(255,80,80,0.25);border-radius:4px;color:#ff6b6b;width:26px;height:26px;cursor:pointer;font-size:14px;line-height:1;padding:0;">✕</button></td>
+      `;
+    }
+    tbody.appendChild(tr);
+  });
+}
+
+function showToast(msg) {
+  let t = document.getElementById('wlToast');
+  if (!t) {
+    t = document.createElement('div'); t.id = 'wlToast';
+    t.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#1e2d45;border:1px solid var(--accent3);color:var(--text);padding:9px 20px;border-radius:8px;font-size:13px;font-family:"DM Sans",sans-serif;z-index:9999;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,0.4)';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg; t.style.opacity = '1';
+  clearTimeout(t._timeout);
+  t._timeout = setTimeout(() => { t.style.opacity = '0'; }, 2500);
+}
 function renderScreenerPage() {
   const start = (screenerPage - 1) * PAGE_SIZE;
   const page = filteredScreener.slice(start, start + PAGE_SIZE);
@@ -3944,6 +4301,7 @@ function renderScreenerPage() {
       <td class="mono">${dget(d,'Signal date') || '—'}</td>   
       <td class="mono ${valColor(dget(d,'Signal Return %'))}">${(()=>{const n=toNum(dget(d,'Signal Return %'));return n!=null?(n>=0?'+':'')+n.toFixed(1)+'%':'—'})()}</td>
       <td class="mono">${dget(d,'Addon Signal') || '—'}</td>
+      <td style="padding:4px 8px;"><button onclick="addToWatchlist('${String(d.Ticker)}')" title="Add to Watchlist" style="background:rgba(77,148,255,0.12); border:1px solid rgba(77,148,255,0.3); border-radius:4px; color:var(--accent3); width:26px; height:26px; font-size:16px; cursor:pointer; line-height:1; padding:0;">＋</button></td>
     `;
     tbody.appendChild(tr);
   });
@@ -3969,9 +4327,11 @@ function renderScreener() { filteredScreener = [...screenerData]; filterScreener
 
 // ===== TABS =====
 function switchTab(name) {
-  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', ['company','sector','screener'][i]===name));
+  const tabNames = ['company','sector','screener','watchlist'];
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', tabNames[i]===name));
   document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
+  if (name === 'watchlist') showWatchlistPanel();
 }
 
 // ===== SAFE DOM HELPERS =====
