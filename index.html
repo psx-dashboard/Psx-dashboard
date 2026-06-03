@@ -513,6 +513,9 @@
   .sort-asc::after { content: ' ↑'; color: var(--accent); }
   .sort-desc::after { content: ' ↓'; color: var(--accent); }
 
+  /* Prevent flicker of pre-baked static rows before JS renders */
+  #screenerBody.pre-render { visibility: hidden; }
+
   /* Hide financials columns (EPS Q → CFO) when toggled */
   #screenerTable.hide-financials .screener-fin-col { display: none; }
 
@@ -741,7 +744,7 @@
     <div class="badge" id="lastUpdated">DATA: 497 COMPANIES</div>
     <div class="badge" id="dataDateBadge">PSX · MAY 2026</div>
     <!-- ADMIN CONTROLS — hidden until unlocked -->
-    <div id="adminControls" style="display: flex; align-items: center; gap: 12px;">
+    <div id="adminControls" style="display: none; align-items: center; gap: 12px;">
       <label class="upload-btn" id="uploadLabel" title="Upload new SourceData Excel file">
         ⬆ Update Data
         <input type="file" id="excelUpload" accept=".xlsx,.xls" style="display:none" onchange="handleExcelUpload(event)">
@@ -751,7 +754,7 @@
       </button>
     </div>
     <div id="uploadStatus" class="upload-status"></div>
-    <button id="adminLockBtn" onclick="toggleAdminLogin()" title="Lock admin" style="background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; cursor: pointer; font-size: 18px; padding: 2px 4px; line-height: 1; opacity: 1; transition: opacity 0.2s;" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity=adminUnlocked?'1':'0.35'">🔓</button>
+    <button id="adminLockBtn" onclick="toggleAdminLogin()" title="Admin login" style="background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; cursor: pointer; font-size: 18px; padding: 2px 4px; line-height: 1; opacity: 0.35; transition: opacity 0.2s;" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity=adminUnlocked?'1':'0.35'">🔒</button>
   </div>
 </div>
 
@@ -1579,7 +1582,7 @@
               <th onclick="sortScreener(14)">Addon Signal</th>
             </tr>
           </thead>
-          <tbody id="screenerBody"><tr>
+          <tbody id="screenerBody" class="pre-render"><tr>
       <td class="ticker-link" onclick="switchTab('company');pickTicker('CJPL')">CJPL</td>
       <td style="max-width:180px; overflow:hidden; text-overflow:ellipsis">Crescent Jute Products Limited</td>
       <td class="screener-hide-mobile" style="max-width:140px; overflow:hidden; text-overflow:ellipsis; color:var(--text2)">JUTE</td>
@@ -3921,6 +3924,7 @@ function renderScreenerPage() {
   const page = filteredScreener.slice(start, start + PAGE_SIZE);
   const tbody = document.getElementById('screenerBody');
   tbody.innerHTML = '';
+  tbody.classList.remove('pre-render');
   page.forEach(d => {
     const score = d['total improvement'];
     const tr = document.createElement('tr');
@@ -4293,27 +4297,32 @@ init();
 
 // ===== ADMIN AUTH =====
 let adminUnlocked = false;
-// Change the password below to whatever you want
-const ADMIN_PASSWORD = 'psx@admin';
+// Password stored as SHA-256 — not visible as plaintext in this file
+// To change: compute sha256 of your new password and replace _adminHash below
+const _adminHash = '6ff41882be43f77eccae79f23f6e8f7385cadf99a73e0f1493631baa1999e194';
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return [...new Uint8Array(buf)].map(x => x.toString(16).padStart(2,'0')).join('');
+}
 
 function toggleAdminLogin() {
   if (adminUnlocked) {
-    // Lock: hide controls
     adminUnlocked = false;
     document.getElementById('adminControls').style.display = 'none';
     document.getElementById('adminLockBtn').textContent = '🔒';
     document.getElementById('adminLockBtn').title = 'Admin login';
     document.getElementById('adminLockBtn').style.opacity = '0.35';
   } else {
-    // Show password modal
     document.getElementById('adminPwModal').classList.add('show');
     setTimeout(() => document.getElementById('adminPwInput').focus(), 80);
   }
 }
 
-function submitAdminPassword() {
+async function submitAdminPassword() {
   const val = document.getElementById('adminPwInput').value;
-  if (val === ADMIN_PASSWORD) {
+  const inputHash = await sha256(val);
+  if (inputHash === _adminHash) {
     adminUnlocked = true;
     document.getElementById('adminControls').style.display = 'flex';
     document.getElementById('adminLockBtn').textContent = '🔓';
