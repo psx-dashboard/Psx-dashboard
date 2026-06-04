@@ -383,10 +383,12 @@
   .pill-neutral { background: rgba(245,166,35,0.15); color: var(--warn); }
 
   /* SCROLLABLE */
-  .scroll-table { overflow-x: auto; max-height: 600px; overflow-y: auto; }
-  .scroll-table::-webkit-scrollbar { width: 4px; height: 4px; }
-  .scroll-table::-webkit-scrollbar-track { background: var(--bg); }
-  .scroll-table::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .scroll-table { overflow-x: auto; max-height: 600px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #4d94ff #1c2230; }
+  .scroll-table::-webkit-scrollbar { width: 10px; height: 10px; }
+  .scroll-table::-webkit-scrollbar-track { background: #1c2230; border-radius: 6px; }
+  .scroll-table::-webkit-scrollbar-thumb { background: #4d94ff; border-radius: 6px; border: 2px solid #1c2230; }
+  .scroll-table::-webkit-scrollbar-thumb:hover { background: #00d4aa; }
+  .scroll-table::-webkit-scrollbar-corner { background: #1c2230; }
 
   /* SECTION */
   .section-title {
@@ -743,6 +745,7 @@
   <div class="header-right">
     <div class="badge" id="lastUpdated">DATA: 497 COMPANIES</div>
     <div class="badge" id="dataDateBadge">PSX · MAY 2026</div>
+    <div class="badge" id="lastUploadedBadge" style="color: var(--accent); border-color: rgba(0, 212, 170, 0.3);">🕐 Updated: 04 Jun 2026 16:03</div>
     <!-- ADMIN CONTROLS — hidden until unlocked -->
     <div id="adminControls" style="display: flex; align-items: center; gap: 12px;">
       <label class="upload-btn" id="uploadLabel" title="Upload new SourceData Excel file">
@@ -916,7 +919,7 @@
     <div class="charts-grid" style="grid-template-columns: 1fr;">
       <div class="chart-card">
         <div class="chart-title">Top Sectors by Total Score (Avg)</div>
-        <div class="chart-wrap" style="height: 320px;"><canvas id="chartSectors" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div>
+        <div class="chart-wrap" style="height: 320px;"><canvas id="chartSectors" style="box-sizing: border-box; display: block; height: 320px; width: 1510px;" width="1585" height="335"></canvas></div>
       </div>
     </div>
     <div class="table-card">
@@ -1557,6 +1560,15 @@
             <option value="">Liquid Filter 💧</option>
             <option value="1">Liquid Stock (+)</option>
             <option value="-1">Non-Liquid Stock (−)</option>
+          </select>
+          <select class="filter-select" id="screenerSignalStatus" onchange="filterScreener()">
+            <option value="">Signal Status 🔔</option>
+            <option value="Fresh buy signal">Fresh Buy Signal</option>
+            <option value="Fresh buy signal (cautious)">Fresh Buy Signal (Cautious)</option>
+            <option value="Hold trade">Hold Trade</option>
+            <option value="Take some profit">Take Some Profit</option>
+            <option value="Be cautious">Be Cautious</option>
+            <option value="No trade">No Trade</option>
           </select>
           <button class="fin-toggle-btn active" id="finToggleBtn" onclick="toggleFinancials()" title="Hide/show EPS, Revenue, Margins, CFO columns">📊 Show Financials</button>
           <span id="screenerCount" style="font-size:11px; color: var(--text2); margin-left: 4px;">497 companies</span>
@@ -4268,6 +4280,7 @@ function filterScreener() {
   const idx = document.getElementById('screenerIndex').value;
   const minScore = parseFloat(document.getElementById('screenerScore').value) || 0;
   const signal = document.getElementById('screenerSignal').value;
+  const signalStatusFilter = document.getElementById('screenerSignalStatus') ? document.getElementById('screenerSignalStatus').value : '';
 
   filteredScreener = screenerData.filter(d => {
     if (q && !String(d.Ticker||'').toLowerCase().includes(q) && !String(d.Name||'').toLowerCase().includes(q)) return false;
@@ -4276,11 +4289,12 @@ function filterScreener() {
     if (minScore && (d['total improvement']||0) < minScore) return false;
     if (signal === '1' && d['Liquid Stock'] !== 1) return false;
     if (signal === '-1' && d['Liquid Stock'] !== -1) return false;
+    if (signalStatusFilter && d['Signal Status'] !== signalStatusFilter) return false;
     return true;
   });
 
   // Sort
-  const sortKeys = ['Ticker','Name','Sector','Latest EPS  Q','Latest TTM EPS Q','Revenue - Q','Op Income-Q','Net Income -Q','ROE 2026-Q1','Debt/Equity 2026-Q1','CFO 2026-Q1','total improvement','Signal date','Signal Return %','Addon Signal'];
+  const sortKeys = ['Ticker','Name','Sector','Latest EPS  Q','Latest TTM EPS Q','Revenue - Q','Op Income-Q','Net Income -Q','ROE 2026-Q1','Debt/Equity 2026-Q1','CFO 2026-Q1','total improvement','Signal date','Signal Return %','Addon Signal','Signal Status','Day Change %'];
   const key = sortKeys[screenerSort.col];
   filteredScreener.sort((a,b) => {
   const av = a[key];
@@ -4290,7 +4304,7 @@ function filterScreener() {
   if (bv == null) return -1;
 
   // columns that must be numeric
-  if (key === 'Signal date' || key === 'Signal Return %' || key === 'Addon Signal' || key === 'Latest EPS  Q' || key === 'Latest TTM EPS Q' || key === 'Revenue - Q' || key === 'ROE 2026-Q1' || key === 'Debt/Equity 2026-Q1' || key === 'CFO 2026-Q1' || key === 'total improvement') {
+  if (key === 'Signal date' || key === 'Signal Return %' || key === 'Addon Signal' || key === 'Latest EPS  Q' || key === 'Latest TTM EPS Q' || key === 'Revenue - Q' || key === 'ROE 2026-Q1' || key === 'Debt/Equity 2026-Q1' || key === 'CFO 2026-Q1' || key === 'total improvement' || key === 'Day Change %') {
     return (Number(av) - Number(bv)) * screenerSort.dir;
   }
 
@@ -4846,6 +4860,15 @@ function reinitDashboard(filename) {
     .sort((a,b) => b.score - a.score);
 
   setEl('lastUpdated', `DATA: ${allTickers.length} COMPANIES`);
+
+  // Set last updated timestamp
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const dateStr = `${pad(now.getDate())} ${months[now.getMonth()]} ${now.getFullYear()}`;
+  const timeStr = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  const badge = document.getElementById('lastUploadedBadge');
+  if (badge) { badge.textContent = `🕐 Updated: ${dateStr} ${timeStr}`; badge.style.display = ''; }
 
   const match = (filename||'').match(/(\d{4})(\d{2})(\d{2})/);
   if (match) {
