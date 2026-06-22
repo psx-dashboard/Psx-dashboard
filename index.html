@@ -1950,7 +1950,7 @@
   </div>
   <div class="header-right">
     <div class="badge" id="lastUpdated">DATA: 497 COMPANIES</div>
-    <div class="badge" id="lastUploadedBadge" style="color: var(--accent); border-color: rgba(0, 212, 170, 0.3);">🕐 Updated: 21 Jun 2026 08:36</div>
+    <div class="badge" id="lastUploadedBadge" style="color: var(--accent); border-color: rgba(0, 212, 170, 0.3);">🕐 Updated: 22 Jun 2026 09:06</div>
     <!-- ADMIN CONTROLS — hidden until unlocked -->
     <div id="adminControls" style="display: flex; align-items: center; gap: 12px; position: relative;">
       <!-- Data Menu Button -->
@@ -2124,15 +2124,15 @@
     <div class="charts-grid">
       <div class="chart-card">
         <div class="chart-title">EPS Trend (Quarterly) <span id="chartEPSLabel"><span style="color:#4d94ff">ATLH</span> • <span style="color:#2ed573;font-weight:700">Score 130</span></span></div>
-        <div class="chart-wrap"><canvas id="chartEPS" style="box-sizing: border-box; display: block; height: 300px; width: 726px;" width="838" height="346"></canvas></div>
+        <div class="chart-wrap"><canvas id="chartEPS" style="box-sizing: border-box; display: block; height: 300px; width: 726px;" width="762" height="314"></canvas></div>
       </div>
       <div class="chart-card">
         <div class="chart-title">Revenue Trend <span id="chartRevLabel"></span></div>
-        <div class="chart-wrap"><canvas id="chartRev" style="box-sizing: border-box; display: block; height: 300px; width: 726px;" width="838" height="346"></canvas></div>
+        <div class="chart-wrap"><canvas id="chartRev" style="box-sizing: border-box; display: block; height: 300px; width: 726px;" width="762" height="314"></canvas></div>
       </div>
       <div class="chart-card">
         <div class="chart-title">Profitability Margins <span></span></div>
-        <div class="chart-wrap"><canvas id="chartMargins" style="box-sizing: border-box; display: block; height: 300px; width: 726px;" width="838" height="346"></canvas></div>
+        <div class="chart-wrap"><canvas id="chartMargins" style="box-sizing: border-box; display: block; height: 300px; width: 726px;" width="762" height="314"></canvas></div>
       </div>
       <div class="chart-card">
         <div class="chart-title">KPI Summary vs Sector <span id="chartKpiLabel"><span id="kpiTickerBadge" style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--accent3)">ATLH</span><span id="kpiScoreBadge" style="font-family:'IBM Plex Mono',monospace;font-size:12px;margin-left:6px">• <span style="color:var(--success);font-weight:700">Score 130</span></span></span></div>
@@ -2204,7 +2204,7 @@
         Total Score — Sector Peer Comparison
         <span id="peerScoreLabel" style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text2)">10 companies · AUTOMOBILE ASSEMBLER</span>
       </div>
-      <div class="chart-wrap" style="height: 260px;"><canvas id="chartPeerScore" style="box-sizing: border-box; display: block; height: 260px; width: 1510px;" width="1744" height="300"></canvas></div>
+      <div class="chart-wrap" style="height: 260px;"><canvas id="chartPeerScore" style="box-sizing: border-box; display: block; height: 260px; width: 1510px;" width="1585" height="272"></canvas></div>
     </div>
 
     <!-- YTD Peer Comparison Chart -->
@@ -2213,7 +2213,7 @@
         YTD Return % — Sector Peer Comparison
         <span id="peerYTDLabel" style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text2)">10 companies · AUTOMOBILE ASSEMBLER</span>
       </div>
-      <div class="chart-wrap" style="height: 260px;"><canvas id="chartPeerYTD" style="box-sizing: border-box; display: block; height: 260px; width: 1510px;" width="1744" height="300"></canvas></div>
+      <div class="chart-wrap" style="height: 260px;"><canvas id="chartPeerYTD" style="box-sizing: border-box; display: block; height: 260px; width: 1510px;" width="1585" height="272"></canvas></div>
     </div>
 
   </div>
@@ -2223,7 +2223,7 @@
     <div class="charts-grid" style="grid-template-columns: 1fr;">
       <div class="chart-card">
         <div class="chart-title">Top Sectors by Total Score (Avg)</div>
-        <div class="chart-wrap" style="height: 320px;"><canvas id="chartSectors" style="box-sizing: border-box; display: block; height: 320px; width: 1510px;" width="1744" height="369"></canvas></div>
+        <div class="chart-wrap" style="height: 320px;"><canvas id="chartSectors" style="box-sizing: border-box; display: block; height: 320px; width: 1510px;" width="1585" height="335"></canvas></div>
       </div>
     </div>
     <div class="table-card">
@@ -3240,7 +3240,7 @@
                 <button type="button" class="msel-action-btn" onclick="mselSelectAll('sector')">Select All</button>
                 <button type="button" class="msel-action-btn" onclick="mselClear('sector')">Clear</button>
               </div>
-              <div class="msel-list" id="sectorMselList"><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'AUTOMOBILE ASSEMBLER', this.checked)"><span class="msel-label" title="AUTOMOBILE ASSEMBLER">AUTOMOBILE ASSEMBLER</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'AUTOMOBILE PARTS &amp; ACCESSORIES', this.checked)"><span class="msel-label" title="AUTOMOBILE PARTS &amp; ACCESSORIES">AUTOMOBILE PARTS &amp; ACCESSORIES</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'Agricultural commodities/Milling', this.checked)"><span class="msel-label" title="Agricultural commodities/Milling">Agricultural commodities/Milling</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'CABLE &amp; ELECTRICAL GOODS', this.checked)"><span class="msel-label" title="CABLE &amp; ELECTRICAL GOODS">CABLE &amp; ELECTRICAL GOODS</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'CEMENT', this.checked)"><span class="msel-label" title="CEMENT">CEMENT</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'CHEMICAL', this.checked)"><span class="msel-label" title="CHEMICAL">CHEMICAL</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'CLOSE - END MUTUAL FUND', this.checked)"><span class="msel-label" title="CLOSE - END MUTUAL FUND">CLOSE - END MUTUAL FUND</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'COMMERCIAL BANKS', this.checked)"><span class="msel-label" title="COMMERCIAL BANKS">COMMERCIAL BANKS</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'ENGINEERING', this.checked)"><span class="msel-label" title="ENGINEERING">ENGINEERING</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'ETF', this.checked)"><span class="msel-label" title="ETF">ETF</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'Electric utilities', this.checked)"><span class="msel-label" title="Electric utilities">Electric utilities</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'FERTILIZER', this.checked)"><span class="msel-label" title="FERTILIZER">FERTILIZER</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'FOOD &amp; PERSONAL CARE PRODUCTS', this.checked)"><span class="msel-label" title="FOOD &amp; PERSONAL CARE PRODUCTS">FOOD &amp; PERSONAL CARE PRODUCTS</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'GLASS &amp; CERAMICS', this.checked)"><span class="msel-label" title="GLASS &amp; CERAMICS">GLASS &amp; CERAMICS</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'INSURANCE', this.checked)"><span class="msel-label" title="INSURANCE">INSURANCE</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'INV. BANKS / INV. COS. / SECURITIES COS.', this.checked)"><span class="msel-label" title="INV. BANKS / INV. COS. / SECURITIES COS.">INV. BANKS / INV. COS. / SECURITIES COS.</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'JUTE', this.checked)"><span class="msel-label" title="JUTE">JUTE</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'LEASING COMPANIES', this.checked)"><span class="msel-label" title="LEASING COMPANIES">LEASING COMPANIES</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'LEATHER &amp; TANNERIES', this.checked)"><span class="msel-label" title="LEATHER &amp; TANNERIES">LEATHER &amp; TANNERIES</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'MISCELLANEOUS', this.checked)"><span class="msel-label" title="MISCELLANEOUS">MISCELLANEOUS</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'MODARABAS', this.checked)"><span class="msel-label" title="MODARABAS">MODARABAS</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'OIL &amp; GAS EXPLORATION COMPANIES', this.checked)"><span class="msel-label" title="OIL &amp; GAS EXPLORATION COMPANIES">OIL &amp; GAS EXPLORATION COMPANIES</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'OIL &amp; GAS MARKETING COMPANIES', this.checked)"><span class="msel-label" title="OIL &amp; GAS MARKETING COMPANIES">OIL &amp; GAS MARKETING COMPANIES</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'PAPER, BOARD &amp; PACKAGING', this.checked)"><span class="msel-label" title="PAPER, BOARD &amp; PACKAGING">PAPER, BOARD &amp; PACKAGING</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'PHARMACEUTICALS', this.checked)"><span class="msel-label" title="PHARMACEUTICALS">PHARMACEUTICALS</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'POWER GENERATION &amp; DISTRIBUTION', this.checked)"><span class="msel-label" title="POWER GENERATION &amp; DISTRIBUTION">POWER GENERATION &amp; DISTRIBUTION</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'PROPERTY', this.checked)"><span class="msel-label" title="PROPERTY">PROPERTY</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'REAL ESTATE INVESTMENT TRUST', this.checked)"><span class="msel-label" title="REAL ESTATE INVESTMENT TRUST">REAL ESTATE INVESTMENT TRUST</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'REFINERY', this.checked)"><span class="msel-label" title="REFINERY">REFINERY</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'SUGAR &amp; ALLIED INDUSTRIES', this.checked)"><span class="msel-label" title="SUGAR &amp; ALLIED INDUSTRIES">SUGAR &amp; ALLIED INDUSTRIES</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'SYNTHETIC &amp; RAYON', this.checked)"><span class="msel-label" title="SYNTHETIC &amp; RAYON">SYNTHETIC &amp; RAYON</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'TECHNOLOGY &amp; COMMUNICATION', this.checked)"><span class="msel-label" title="TECHNOLOGY &amp; COMMUNICATION">TECHNOLOGY &amp; COMMUNICATION</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'TEXTILE COMPOSITE', this.checked)"><span class="msel-label" title="TEXTILE COMPOSITE">TEXTILE COMPOSITE</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'TEXTILE SPINNING', this.checked)"><span class="msel-label" title="TEXTILE SPINNING">TEXTILE SPINNING</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'TEXTILE WEAVING', this.checked)"><span class="msel-label" title="TEXTILE WEAVING">TEXTILE WEAVING</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'TOBACCO', this.checked)"><span class="msel-label" title="TOBACCO">TOBACCO</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'TRANSPORT', this.checked)"><span class="msel-label" title="TRANSPORT">TRANSPORT</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'Textiles', this.checked)"><span class="msel-label" title="Textiles">Textiles</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'VANASPATI &amp; ALLIED INDUSTRIES', this.checked)"><span class="msel-label" title="VANASPATI &amp; ALLIED INDUSTRIES">VANASPATI &amp; ALLIED INDUSTRIES</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('sector', 'WOOLLEN', this.checked)"><span class="msel-label" title="WOOLLEN">WOOLLEN</span></label></div>
+              <div class="msel-list" id="sectorMselList"></div>
             </div>
           </div>
           <div class="msel" id="extraMsel">
@@ -3253,7 +3253,7 @@
                 <button type="button" class="msel-action-btn" onclick="mselSelectAll('extra')">Select All</button>
                 <button type="button" class="msel-action-btn" onclick="mselClear('extra')">Clear</button>
               </div>
-              <div class="msel-list" id="extraMselList"><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('extra', 'turnaround', this.checked)"><span class="msel-label" title="🔁 Turnaround Candidates">🔁 Turnaround Candidates</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('extra', 'mcap_gt_1b', this.checked)"><span class="msel-label" title="Market Cap &gt; 1 Billion">Market Cap &gt; 1 Billion</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('extra', 'mcap_gt_500m', this.checked)"><span class="msel-label" title="Market Cap &gt; 500 Million">Market Cap &gt; 500 Million</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('extra', 'mcap_gt_250m', this.checked)"><span class="msel-label" title="Market Cap &gt; 250 Million">Market Cap &gt; 250 Million</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('extra', 'mcap_lt_250m', this.checked)"><span class="msel-label" title="Market Cap &lt; 250 Million">Market Cap &lt; 250 Million</span></label></div>
+              <div class="msel-list" id="extraMselList"></div>
             </div>
           </div>
           <div class="msel" id="scoreMsel">
@@ -3279,7 +3279,7 @@
                 <button type="button" class="msel-action-btn" onclick="mselSelectAll('status')">Select All</button>
                 <button type="button" class="msel-action-btn" onclick="mselClear('status')">Clear</button>
               </div>
-              <div class="msel-list" id="statusMselList"><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('status', 'Fresh buy signal', this.checked)"><span class="msel-label" title="Fresh Buy Signal">Fresh Buy Signal</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('status', 'Fresh buy signal (cautious)', this.checked)"><span class="msel-label" title="Fresh Buy Signal (Cautious)">Fresh Buy Signal (Cautious)</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('status', 'Hold trade', this.checked)"><span class="msel-label" title="Hold Trade">Hold Trade</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('status', 'Take some profit', this.checked)"><span class="msel-label" title="Take Some Profit">Take Some Profit</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('status', 'Be cautious', this.checked)"><span class="msel-label" title="Be Cautious">Be Cautious</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('status', 'Buy call closed', this.checked)"><span class="msel-label" title="Buy call closed">Buy call closed</span></label><label class="msel-item"><input type="checkbox" onchange="mselToggleItem('status', 'No trade', this.checked)"><span class="msel-label" title="No Trade">No Trade</span></label></div>
+              <div class="msel-list" id="statusMselList"></div>
             </div>
           </div>
           <select class="filter-select" id="screenerSignal" onchange="filterScreener()">
@@ -3295,15 +3295,15 @@
 
         </div>
       </div>
-      <div class="table-toggles" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 16px 10px 664px; border-bottom: 1px solid var(--border);">
+      <div class="table-toggles" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 16px 10px 662px; border-bottom: 1px solid var(--border);">
           <button class="fin-toggle-btn" id="finToggleBtn" onclick="toggleFinancials()" title="Hide/show EPS, Revenue, Margins, CFO columns">📊 Show Financials</button>
-          <button class="fin-toggle-btn" id="techToggleBtn" onclick="toggleTechnical()" title="Hide/show Signal Date, Signal Return%, Signal Status columns">📡 Show Technical</button>
+          <button class="fin-toggle-btn active" id="techToggleBtn" onclick="toggleTechnical()" title="Hide/show Signal Date, Signal Return%, Signal Status columns">📡 Hide Technical</button>
           <button class="fin-toggle-btn" id="dailyToggleBtn" onclick="toggleDaily()" title="Show Price, Rel Vol, Volume and 1D % columns">📉 Show Daily Movement</button>
           <button class="fin-toggle-btn" id="perfToggleBtn" onclick="togglePerformance()" title="Hide/show performance return columns">📈 Show Performance</button>
           <span id="screenerCount" style="font-size:11px; color: var(--text2); margin-left: 4px;">497 companies</span>
       </div>
       <div class="scroll-table">
-        <table class="data-table hide-technical hide-performance hide-daily hide-financials" id="screenerTable">
+        <table class="data-table hide-financials hide-performance hide-daily" id="screenerTable">
           <thead>
             <tr id="screenerTableHead">
               <th onclick="sortScreener(0)">Ticker</th>
@@ -6669,7 +6669,7 @@
       <td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-8.82%</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">10.34</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">25</td>
     </tr></tbody></table></div>
     </div></div>
-    <div class="top-grid-2" style="margin-bottom:16px;">
+    <div class="top-grid-3" style="margin-bottom:16px;">
     <div class="top-table-card">
       <div class="top-table-head"><span class="th-icon">🔊</span>Top 10 Relative Volume</div>
       <div style="overflow-x:auto;" id="wrap-rvol"><table class="top-mini-table" id="rvol" style="width:100%;border-collapse:collapse;">
@@ -6728,6 +6728,151 @@
       <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('OCTOPUS');">OCTOPUS</td>
       <td class="nm" style="padding:7px 11px;" title="Octopus Digital Limited">Octopus Digital Limited</td>
       <td class="vl" style="padding:7px 11px;text-align:right;color:var(--warn);">8.42x</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text2);">6.46M</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+9.66%</td>
+    </tr></tbody></table></div>
+    </div>
+    <div class="top-table-card">
+      <div class="top-table-head"><span class="th-icon">🔁</span>Turnaround Candidates (Loss Narrowing) <span style="margin-left:auto;font-weight:600;color:var(--text3);">27</span></div>
+      <div style="overflow-x:auto;max-height:360px;overflow-y:auto;" id="wrap-turn"><table class="top-mini-table" id="turn" style="width:100%;border-collapse:collapse;">
+    <thead><tr>
+      <th style="padding:7px 11px;background:var(--surface2);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;cursor:pointer;user-select:none;white-space:nowrap;border-bottom:2px solid var(--border2);color:var(--text2);text-align:center;" onclick="sortTopTable('turn','rank')"># <span style="opacity:.3">⇅</span></th>
+      <th style="padding:7px 11px;background:var(--surface2);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;cursor:pointer;user-select:none;white-space:nowrap;border-bottom:2px solid var(--border2);color:var(--text2);" onclick="sortTopTable('turn','ticker')">Ticker <span style="opacity:.3">⇅</span></th>
+      <th style="padding:7px 11px;background:var(--surface2);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;cursor:pointer;user-select:none;white-space:nowrap;border-bottom:2px solid var(--border2);color:var(--text2);" onclick="sortTopTable('turn','name')">Name <span style="opacity:.3">⇅</span></th>
+      <th style="padding:7px 11px;background:var(--surface2);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;cursor:pointer;user-select:none;white-space:nowrap;border-bottom:2px solid var(--border2);color:var(--text2);text-align:right;" onclick="sortTopTable('turn',0)">Total Score <span style="opacity:.3">⇅</span></th><th style="padding:7px 11px;background:var(--surface2);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;cursor:pointer;user-select:none;white-space:nowrap;border-bottom:2px solid var(--border2);color:var(--text2);text-align:right;" onclick="sortTopTable('turn',1)">YTD % <span style="opacity:.3">⇅</span></th>
+    </tr></thead><tbody><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">1</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('MERIT');">MERIT</td>
+      <td class="nm" style="padding:7px 11px;" title="Merit Packaging Limited">Merit Packaging Limited</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">130</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-23.61%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">2</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('ITTEFAQ');">ITTEFAQ</td>
+      <td class="nm" style="padding:7px 11px;" title="Ittefaq Iron Industries Limited">Ittefaq Iron Industries Li…</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">120</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-10.27%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">3</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('DFSM');">DFSM</td>
+      <td class="nm" style="padding:7px 11px;" title="Dewan Farooque Spinning Mills Limited">Dewan Farooque Spinning Mi…</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">120</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+211.69%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">4</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('GATI');">GATI</td>
+      <td class="nm" style="padding:7px 11px;" title="Gatron (Industries) Limited">Gatron (Industries) Limite…</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">110</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-27.57%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">5</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('DADX');">DADX</td>
+      <td class="nm" style="padding:7px 11px;" title="Dadex Eternit Limited">Dadex Eternit Limited</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">110</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+65.07%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">6</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('BUXL');">BUXL</td>
+      <td class="nm" style="padding:7px 11px;" title="Buxly Paints Limited">Buxly Paints Limited</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">110</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+26.09%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">7</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('SERT');">SERT</td>
+      <td class="nm" style="padding:7px 11px;" title="Service Industries Textiles Limited">Service Industries Textile…</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">110</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+11.46%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">8</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('JDMT');">JDMT</td>
+      <td class="nm" style="padding:7px 11px;" title="Janana De Malucho Textile Mills Limited">Janana De Malucho Textile …</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">110</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-22.62%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">9</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('QUET');">QUET</td>
+      <td class="nm" style="padding:7px 11px;" title="Quetta Textile Mills Limited">Quetta Textile Mills Limit…</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">110</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-6.69%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">10</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('BGL');">BGL</td>
+      <td class="nm" style="padding:7px 11px;" title="Balochistan Glass Limited">Balochistan Glass Limited</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">100</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-11.59%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">11</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('CFL');">CFL</td>
+      <td class="nm" style="padding:7px 11px;" title="Crescent Fibres Limited">Crescent Fibres Limited</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">100</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+16.54%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">12</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('IDSM');">IDSM</td>
+      <td class="nm" style="padding:7px 11px;" title="Ideal Spinning Mills Limited">Ideal Spinning Mills Limit…</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">100</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+168.94%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">13</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('IBFL');">IBFL</td>
+      <td class="nm" style="padding:7px 11px;" title="Ibrahim Fibres Limited">Ibrahim Fibres Limited</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--warn);">90</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-16.40%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">14</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('GATM');">GATM</td>
+      <td class="nm" style="padding:7px 11px;" title="Gul Ahmed Textile Mills Limited">Gul Ahmed Textile Mills Li…</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--warn);">90</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+3.24%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">15</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('CEPB');">CEPB</td>
+      <td class="nm" style="padding:7px 11px;" title="Century Paper &amp; Board Mills Limited">Century Paper &amp; Board Mill…</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--warn);">90</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-15.37%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">16</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('FASM');">FASM</td>
+      <td class="nm" style="padding:7px 11px;" title="Faisal Spinning Mills Limited">Faisal Spinning Mills Limi…</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--warn);">90</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+14.78%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">17</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('SGABL');">SGABL</td>
+      <td class="nm" style="padding:7px 11px;" title="SG Allied Businesses Limited">SG Allied Businesses Limit…</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--warn);">85</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+0.00%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">18</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('BATA');">BATA</td>
+      <td class="nm" style="padding:7px 11px;" title="Bata Pakistan Limited">Bata Pakistan Limited</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--warn);">80</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-19.94%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">19</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('ELCM');">ELCM</td>
+      <td class="nm" style="padding:7px 11px;" title="Elahi Cotton Mills Limited">Elahi Cotton Mills Limited</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--warn);">80</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+39.63%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">20</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('GRYL');">GRYL</td>
+      <td class="nm" style="padding:7px 11px;" title="Grays Leasing Limited">Grays Leasing Limited</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--warn);">80</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-21.18%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">21</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('FPJM');">FPJM</td>
+      <td class="nm" style="padding:7px 11px;" title="First Punjab Modaraba">First Punjab Modaraba</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--warn);">75</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-12.62%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">22</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('BAFS');">BAFS</td>
+      <td class="nm" style="padding:7px 11px;" title="Baba Farid Sugar Mills Limited">Baba Farid Sugar Mills Lim…</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--warn);">71</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-6.61%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">23</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('STCL');">STCL</td>
+      <td class="nm" style="padding:7px 11px;" title="Shabbir Tiles and Ceramics Limited">Shabbir Tiles and Ceramics…</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--warn);">70</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-26.06%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">24</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('DWSM');">DWSM</td>
+      <td class="nm" style="padding:7px 11px;" title="Dewan Sugar Mills Limited">Dewan Sugar Mills Limited</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--warn);">70</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-2.13%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">25</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('ANTM');">ANTM</td>
+      <td class="nm" style="padding:7px 11px;" title="AN Textile Mills Limited">AN Textile Mills Limited</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--warn);">70</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+13.85%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">26</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('JSRR');">JSRR</td>
+      <td class="nm" style="padding:7px 11px;" title="JS Rental REIT">JS Rental REIT</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">60</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-10.00%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">27</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('SML');">SML</td>
+      <td class="nm" style="padding:7px 11px;" title="Shakarganj Limited">Shakarganj Limited</td>
+      <td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">50</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+6.55%</td>
     </tr></tbody></table></div>
     </div>
     <div class="top-table-card">
@@ -6801,44 +6946,44 @@
       <th style="padding:7px 11px;background:var(--surface2);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;cursor:pointer;user-select:none;white-space:nowrap;border-bottom:2px solid var(--border2);color:var(--text2);text-align:left;" onclick="sortTopTable('score',0)">Sector <span style="opacity:.3">⇅</span></th><th style="padding:7px 11px;background:var(--surface2);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;cursor:pointer;user-select:none;white-space:nowrap;border-bottom:2px solid var(--border2);color:var(--text2);text-align:right;" onclick="sortTopTable('score',1)">Score <span style="opacity:.3">⇅</span></th><th style="padding:7px 11px;background:var(--surface2);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;cursor:pointer;user-select:none;white-space:nowrap;border-bottom:2px solid var(--border2);color:var(--text2);text-align:right;" onclick="sortTopTable('score',2)">Price <span style="opacity:.3">⇅</span></th><th style="padding:7px 11px;background:var(--surface2);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;cursor:pointer;user-select:none;white-space:nowrap;border-bottom:2px solid var(--border2);color:var(--text2);text-align:right;" onclick="sortTopTable('score',3)">YTD % <span style="opacity:.3">⇅</span></th>
     </tr></thead><tbody><tr>
       <td class="rk" style="text-align:center;padding:7px 8px;">1</td>
-      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('MACFL');">MACFL</td>
-      <td class="nm" style="padding:7px 11px;" title="Macpac Films Limited">Macpac Films Limited</td>
-      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">PAPER, BOARD &amp; PACKA</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">130</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 72.98</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+152.61%</td>
-    </tr><tr>
-      <td class="rk" style="text-align:center;padding:7px 8px;">2</td>
-      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('ZUMA');">ZUMA</td>
-      <td class="nm" style="padding:7px 11px;" title="Zuma Resources Limited">Zuma Resources Limited</td>
-      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">TEXTILE SPINNING</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">130</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 0.00</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+0.00%</td>
-    </tr><tr>
-      <td class="rk" style="text-align:center;padding:7px 8px;">3</td>
       <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('ATLH');">ATLH</td>
       <td class="nm" style="padding:7px 11px;" title="Atlas Honda Limited">Atlas Honda Limited</td>
       <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">AUTOMOBILE ASSEMBLER</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">130</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 1719.67</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+15.98%</td>
     </tr><tr>
-      <td class="rk" style="text-align:center;padding:7px 8px;">4</td>
+      <td class="rk" style="text-align:center;padding:7px 8px;">2</td>
       <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('BPL');">BPL</td>
       <td class="nm" style="padding:7px 11px;" title="Burshane LPG (Pakistan) Limited">Burshane LPG (Pakistan) Li…</td>
       <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">OIL &amp; GAS MARKETING </td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">130</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 60.19</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+100.63%</td>
     </tr><tr>
-      <td class="rk" style="text-align:center;padding:7px 8px;">5</td>
-      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('PGLC');">PGLC</td>
-      <td class="nm" style="padding:7px 11px;" title="Pak-Gulf Leasing Company Limited">Pak-Gulf Leasing Company L…</td>
-      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">LEASING COMPANIES</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">130</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 14.57</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-4.14%</td>
-    </tr><tr>
-      <td class="rk" style="text-align:center;padding:7px 8px;">6</td>
+      <td class="rk" style="text-align:center;padding:7px 8px;">3</td>
       <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('PRL');">PRL</td>
       <td class="nm" style="padding:7px 11px;" title="Pakistan Refinery Limited">Pakistan Refinery Limited</td>
       <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">REFINERY</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">130</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 35.97</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-1.86%</td>
     </tr><tr>
-      <td class="rk" style="text-align:center;padding:7px 8px;">7</td>
-      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('NEXT');">NEXT</td>
-      <td class="nm" style="padding:7px 11px;" title="Next Capital Limited">Next Capital Limited</td>
-      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">INV. BANKS / INV. CO</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">125</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 11.01</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-24.85%</td>
+      <td class="rk" style="text-align:center;padding:7px 8px;">4</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('MACFL');">MACFL</td>
+      <td class="nm" style="padding:7px 11px;" title="Macpac Films Limited">Macpac Films Limited</td>
+      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">PAPER, BOARD &amp; PACKA</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">130</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 72.98</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+152.61%</td>
     </tr><tr>
-      <td class="rk" style="text-align:center;padding:7px 8px;">8</td>
+      <td class="rk" style="text-align:center;padding:7px 8px;">5</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('ZUMA');">ZUMA</td>
+      <td class="nm" style="padding:7px 11px;" title="Zuma Resources Limited">Zuma Resources Limited</td>
+      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">TEXTILE SPINNING</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">130</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 0.00</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+0.00%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">6</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('PGLC');">PGLC</td>
+      <td class="nm" style="padding:7px 11px;" title="Pak-Gulf Leasing Company Limited">Pak-Gulf Leasing Company L…</td>
+      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">LEASING COMPANIES</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">130</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 14.57</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-4.14%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">7</td>
       <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('POL');">POL</td>
       <td class="nm" style="padding:7px 11px;" title="Pakistan Oilfields Limited">Pakistan Oilfields Limited</td>
       <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">OIL &amp; GAS EXPLORATIO</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">125</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 693.77</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+13.73%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">8</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('NEXT');">NEXT</td>
+      <td class="nm" style="padding:7px 11px;" title="Next Capital Limited">Next Capital Limited</td>
+      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">INV. BANKS / INV. CO</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">125</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 11.01</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-24.85%</td>
     </tr><tr>
       <td class="rk" style="text-align:center;padding:7px 8px;">9</td>
       <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('NETSOL');">NETSOL</td>
@@ -6846,9 +6991,9 @@
       <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">TECHNOLOGY &amp; COMMUNI</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">120</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 133.10</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-1.41%</td>
     </tr><tr>
       <td class="rk" style="text-align:center;padding:7px 8px;">10</td>
-      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('MSCL');">MSCL</td>
-      <td class="nm" style="padding:7px 11px;" title="Metropolitan Steel Corporation Limited">Metropolitan Steel Corpora…</td>
-      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">ENGINEERING</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">120</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 29.10</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+102.22%</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('ITTEFAQ');">ITTEFAQ</td>
+      <td class="nm" style="padding:7px 11px;" title="Ittefaq Iron Industries Limited">Ittefaq Iron Industries Li…</td>
+      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">ENGINEERING</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">120</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 8.91</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-10.27%</td>
     </tr><tr>
       <td class="rk" style="text-align:center;padding:7px 8px;">11</td>
       <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('BWCL');">BWCL</td>
@@ -6856,24 +7001,24 @@
       <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">CEMENT</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">115</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 470.73</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-10.37%</td>
     </tr><tr>
       <td class="rk" style="text-align:center;padding:7px 8px;">12</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('UBL');">UBL</td>
+      <td class="nm" style="padding:7px 11px;" title="United Bank Limited">United Bank Limited</td>
+      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">COMMERCIAL BANKS</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">110</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 438.18</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+3.10%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">13</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('NESTLE');">NESTLE</td>
+      <td class="nm" style="padding:7px 11px;" title="Nestlé Pakistan Limited">Nestlé Pakistan Limited</td>
+      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">FOOD &amp; PERSONAL CARE</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">110</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 7780.00</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-2.18%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">14</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('TSPL');">TSPL</td>
+      <td class="nm" style="padding:7px 11px;" title="Tri-Star Power Limited">Tri-Star Power Limited</td>
+      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">POWER GENERATION &amp; D</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">110</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 14.78</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-6.16%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">15</td>
       <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('QUET');">QUET</td>
       <td class="nm" style="padding:7px 11px;" title="Quetta Textile Mills Limited">Quetta Textile Mills Limit…</td>
       <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">TEXTILE COMPOSITE</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">110</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 15.77</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-6.69%</td>
-    </tr><tr>
-      <td class="rk" style="text-align:center;padding:7px 8px;">13</td>
-      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('UPFL');">UPFL</td>
-      <td class="nm" style="padding:7px 11px;" title="Unilever Pakistan Foods Limited">Unilever Pakistan Foods Li…</td>
-      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">FOOD &amp; PERSONAL CARE</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">110</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 25983.33</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-10.40%</td>
-    </tr><tr>
-      <td class="rk" style="text-align:center;padding:7px 8px;">14</td>
-      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('GATI');">GATI</td>
-      <td class="nm" style="padding:7px 11px;" title="Gatron (Industries) Limited">Gatron (Industries) Limite…</td>
-      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">SYNTHETIC &amp; RAYON</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">110</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 89.07</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-27.57%</td>
-    </tr><tr>
-      <td class="rk" style="text-align:center;padding:7px 8px;">15</td>
-      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('FTSM');">FTSM</td>
-      <td class="nm" style="padding:7px 11px;" title="First Tri-Star Modaraba">First Tri-Star Modaraba</td>
-      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">MODARABAS</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">110</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 30.61</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+54.52%</td>
     </tr><tr>
       <td class="rk" style="text-align:center;padding:7px 8px;">16</td>
       <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('BUXL');">BUXL</td>
@@ -6881,24 +7026,24 @@
       <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">CHEMICAL</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">110</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 189.13</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+26.09%</td>
     </tr><tr>
       <td class="rk" style="text-align:center;padding:7px 8px;">17</td>
-      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('TSPL');">TSPL</td>
-      <td class="nm" style="padding:7px 11px;" title="Tri-Star Power Limited">Tri-Star Power Limited</td>
-      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">POWER GENERATION &amp; D</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">110</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 14.78</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-6.16%</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('SRVI');">SRVI</td>
+      <td class="nm" style="padding:7px 11px;" title="Service Industries Limited">Service Industries Limited</td>
+      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">LEATHER &amp; TANNERIES</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">110</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 2204.06</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+40.39%</td>
     </tr><tr>
       <td class="rk" style="text-align:center;padding:7px 8px;">18</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('GATI');">GATI</td>
+      <td class="nm" style="padding:7px 11px;" title="Gatron (Industries) Limited">Gatron (Industries) Limite…</td>
+      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">SYNTHETIC &amp; RAYON</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">110</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 89.07</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-27.57%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">19</td>
       <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('HUSI');">HUSI</td>
       <td class="nm" style="padding:7px 11px;" title="Husein Industries Limited">Husein Industries Limited</td>
       <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">PROPERTY</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">110</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 40.57</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+62.28%</td>
     </tr><tr>
-      <td class="rk" style="text-align:center;padding:7px 8px;">19</td>
-      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('UBL');">UBL</td>
-      <td class="nm" style="padding:7px 11px;" title="United Bank Limited">United Bank Limited</td>
-      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">COMMERCIAL BANKS</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">110</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 438.18</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+3.10%</td>
-    </tr><tr>
       <td class="rk" style="text-align:center;padding:7px 8px;">20</td>
-      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('SRVI');">SRVI</td>
-      <td class="nm" style="padding:7px 11px;" title="Service Industries Limited">Service Industries Limited</td>
-      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">LEATHER &amp; TANNERIES</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">110</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 2204.06</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+40.39%</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('FTSM');">FTSM</td>
+      <td class="nm" style="padding:7px 11px;" title="First Tri-Star Modaraba">First Tri-Star Modaraba</td>
+      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">MODARABAS</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">110</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 30.61</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">+54.52%</td>
     </tr><tr>
       <td class="rk" style="text-align:center;padding:7px 8px;">21</td>
       <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('PABC');">PABC</td>
@@ -6906,9 +7051,9 @@
       <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">MISCELLANEOUS</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">105</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 113.64</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-11.91%</td>
     </tr><tr>
       <td class="rk" style="text-align:center;padding:7px 8px;">22</td>
-      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('BGL');">BGL</td>
-      <td class="nm" style="padding:7px 11px;" title="Balochistan Glass Limited">Balochistan Glass Limited</td>
-      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">GLASS &amp; CERAMICS</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">100</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 12.05</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-11.59%</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('PAKT');">PAKT</td>
+      <td class="nm" style="padding:7px 11px;" title="Pakistan Tobacco Company Limited">Pakistan Tobacco Company L…</td>
+      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">TOBACCO</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">100</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 1402.26</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-9.15%</td>
     </tr><tr>
       <td class="rk" style="text-align:center;padding:7px 8px;">23</td>
       <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('PICT');">PICT</td>
@@ -6916,9 +7061,9 @@
       <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">TRANSPORT</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">100</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 38.79</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-8.90%</td>
     </tr><tr>
       <td class="rk" style="text-align:center;padding:7px 8px;">24</td>
-      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('PAKT');">PAKT</td>
-      <td class="nm" style="padding:7px 11px;" title="Pakistan Tobacco Company Limited">Pakistan Tobacco Company L…</td>
-      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">TOBACCO</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">100</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 1402.26</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-9.15%</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('BGL');">BGL</td>
+      <td class="nm" style="padding:7px 11px;" title="Balochistan Glass Limited">Balochistan Glass Limited</td>
+      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">GLASS &amp; CERAMICS</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">100</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 12.05</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-11.59%</td>
     </tr><tr>
       <td class="rk" style="text-align:center;padding:7px 8px;">25</td>
       <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('ICCI');">ICCI</td>
@@ -6926,24 +7071,24 @@
       <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">TEXTILE WEAVING</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--success);">100</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 12.37</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-8.37%</td>
     </tr><tr>
       <td class="rk" style="text-align:center;padding:7px 8px;">26</td>
+      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('AHCL');">AHCL</td>
+      <td class="nm" style="padding:7px 11px;" title="Arif Habib Corporation Limited">Arif Habib Corporation Lim…</td>
+      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">FERTILIZER</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--warn);">95</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 16.08</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-0.12%</td>
+    </tr><tr>
+      <td class="rk" style="text-align:center;padding:7px 8px;">27</td>
       <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('SKRS');">SKRS</td>
       <td class="nm" style="padding:7px 11px;" title="Sakrand Sugar Mills Limited">Sakrand Sugar Mills Limite…</td>
       <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">SUGAR &amp; ALLIED INDUS</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--warn);">95</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 27.04</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-26.62%</td>
     </tr><tr>
-      <td class="rk" style="text-align:center;padding:7px 8px;">27</td>
+      <td class="rk" style="text-align:center;padding:7px 8px;">28</td>
       <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('PINL');">PINL</td>
       <td class="nm" style="padding:7px 11px;" title="Premier Insurance Limited">Premier Insurance Limited</td>
       <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">INSURANCE</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--warn);">95</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 9.37</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-13.16%</td>
     </tr><tr>
-      <td class="rk" style="text-align:center;padding:7px 8px;">28</td>
+      <td class="rk" style="text-align:center;padding:7px 8px;">29</td>
       <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('PAEL');">PAEL</td>
       <td class="nm" style="padding:7px 11px;" title="Pak Elektron Limited">Pak Elektron Limited</td>
       <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">CABLE &amp; ELECTRICAL G</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--warn);">95</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 42.75</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-25.78%</td>
-    </tr><tr>
-      <td class="rk" style="text-align:center;padding:7px 8px;">29</td>
-      <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('AHCL');">AHCL</td>
-      <td class="nm" style="padding:7px 11px;" title="Arif Habib Corporation Limited">Arif Habib Corporation Lim…</td>
-      <td class="vl" style="padding:7px 11px;text-align:left;color:var(--text2);">FERTILIZER</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--warn);">95</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--text);">PKR 16.08</td><td class="vl" style="padding:7px 11px;text-align:right;color:var(--danger);">-0.12%</td>
     </tr><tr>
       <td class="rk" style="text-align:center;padding:7px 8px;">30</td>
       <td class="tk" style="cursor:pointer;padding:7px 11px;" onclick="switchTab('company');pickTicker('THALL');">THALL</td>
@@ -9748,7 +9893,7 @@ async function copyShareLink() {
 
 // ===== THEME TOGGLE =====
 (function() {
-  const saved = localStorage.getItem('psx_theme') || 'dark';
+  const saved = localStorage.getItem('psx_theme') || 'light';
   applyTheme(saved);
   // Sync label on load
   const label = document.getElementById('themeLabel');
