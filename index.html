@@ -1995,11 +1995,34 @@
   }
   .auth-google-btn:hover { background: #f4f4f4; }
   .auth-error { color: #ff6868; font-size: 13px; margin: 0 0 10px; min-height: 16px; }
-  #authSignOutBtn {
-    position: fixed; top: 10px; right: 10px; z-index: 99998; padding: 6px 12px;
-    border-radius: 8px; border: 1px solid #2a323d; background: #12161c; color: #8a94a3;
-    font-size: 12px; cursor: pointer; display: none;
+  #authUserMenu { position: fixed; top: 12px; right: 14px; z-index: 99998; display: none; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; }
+  .auth-avatar-btn {
+    width: 34px; height: 34px; border-radius: 50%; border: none; cursor: pointer;
+    background: var(--accent, #00d4aa); color: #08130f; font-size: 15px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.25);
   }
+  .auth-dropdown {
+    position: absolute; top: 42px; right: 0; width: 270px;
+    background: #fff; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,0.22);
+    padding: 16px; box-sizing: border-box;
+  }
+  .auth-dropdown.hidden { display: none; }
+  .auth-dropdown-header { display: flex; align-items: center; gap: 12px; }
+  .auth-avatar-lg {
+    width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
+    background: var(--accent, #00d4aa); color: #08130f; font-size: 18px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .auth-dropdown-info { overflow: hidden; }
+  .auth-dropdown-name { font-size: 14px; font-weight: 600; color: #1a1a1a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .auth-dropdown-email { font-size: 12px; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .auth-dropdown-sep { height: 1px; background: #e5e7eb; margin: 12px 0; }
+  .auth-dropdown-item {
+    width: 100%; text-align: left; padding: 9px 10px; border: none; background: none;
+    border-radius: 8px; font-size: 13px; color: #1f2937; cursor: pointer;
+  }
+  .auth-dropdown-item:hover { background: #f3f4f6; }
 </style>
 <div id="authOverlay">
   <div class="auth-card">
@@ -2017,7 +2040,21 @@
     </button>
   </div>
 </div>
-<button id="authSignOutBtn">Sign out</button>
+<div id="authUserMenu" class="auth-user-menu">
+  <button id="authAvatarBtn" class="auth-avatar-btn">?</button>
+  <div id="authDropdown" class="auth-dropdown hidden">
+    <div class="auth-dropdown-header">
+      <div class="auth-avatar-lg" id="authAvatarLg">?</div>
+      <div class="auth-dropdown-info">
+        <div class="auth-dropdown-name" id="authDropdownName">&nbsp;</div>
+        <div class="auth-dropdown-email" id="authDropdownEmail">&nbsp;</div>
+      </div>
+    </div>
+    <div class="auth-dropdown-sep"></div>
+    <button class="auth-dropdown-item" id="authManageBtn">⚙️ Manage account</button>
+    <button class="auth-dropdown-item" id="authSignOutItem">↪️ Sign out</button>
+  </div>
+</div>
 <div class="header">
   <div>
     <div class="header-title">📊 <span class="brand-accent">PSX</span> Financial Performance Dashboard</div>
@@ -10453,7 +10490,14 @@ const _origToggleTechnical = toggleTechnical;
   const auth = getAuth(app);
 
   const overlay = document.getElementById('authOverlay');
-  const signOutBtn = document.getElementById('authSignOutBtn');
+  const userMenu = document.getElementById('authUserMenu');
+  const avatarBtn = document.getElementById('authAvatarBtn');
+  const dropdown = document.getElementById('authDropdown');
+  const avatarLg = document.getElementById('authAvatarLg');
+  const dropdownName = document.getElementById('authDropdownName');
+  const dropdownEmail = document.getElementById('authDropdownEmail');
+  const manageBtn = document.getElementById('authManageBtn');
+  const signOutItem = document.getElementById('authSignOutItem');
   const emailEl = document.getElementById('authEmail');
   const passEl = document.getElementById('authPassword');
   const errEl = document.getElementById('authError');
@@ -10515,7 +10559,20 @@ const _origToggleTechnical = toggleTechnical;
     if (e.key === 'Enter') submitBtn.click();
   }));
 
-  signOutBtn.addEventListener('click', () => signOut(auth));
+  avatarBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    dropdown.classList.toggle('hidden');
+  });
+  document.addEventListener('click', (e) => {
+    if (!userMenu.contains(e.target)) dropdown.classList.add('hidden');
+  });
+  signOutItem.addEventListener('click', () => { dropdown.classList.add('hidden'); signOut(auth); });
+  manageBtn.addEventListener('click', () => {
+    dropdown.classList.add('hidden');
+    // Placeholder for now — this is a natural place to surface subscription
+    // status/plan management once Stripe billing is wired in (Step 4+).
+    alert('Account management is coming soon — this is where your subscription and plan details will appear.');
+  });
 
   const googleBtn = document.getElementById('authGoogleBtn');
   const googleProvider = new GoogleAuthProvider();
@@ -10539,11 +10596,19 @@ const _origToggleTechnical = toggleTechnical;
     if (user) {
       document.body.classList.remove('authgate-locked');
       overlay.classList.add('hidden');
-      signOutBtn.style.display = 'block';
+      const displayName = user.displayName || '';
+      const email = user.email || '';
+      const initial = (displayName || email || '?').charAt(0).toUpperCase();
+      avatarBtn.textContent = initial;
+      avatarLg.textContent = initial;
+      dropdownName.textContent = displayName || email || 'Account';
+      dropdownEmail.textContent = email;
+      userMenu.style.display = 'block';
     } else {
       document.body.classList.add('authgate-locked');
       overlay.classList.remove('hidden');
-      signOutBtn.style.display = 'none';
+      userMenu.style.display = 'none';
+      dropdown.classList.add('hidden');
     }
   });
 </script>
