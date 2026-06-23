@@ -1958,6 +1958,17 @@
 <style>
   /* ===== AUTH GATE (Firebase) ===== */
   body.authgate-locked > *:not(#authOverlay) { display: none !important; }
+  body.paywall-locked > *:not(#paywallOverlay):not(#authUserMenu) { display: none !important; }
+  #paywallOverlay {
+    position: fixed; inset: 0; z-index: 99996;
+    display: flex; align-items: center; justify-content: center;
+    background: #0b0f14; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  }
+  #paywallOverlay.hidden { display: none; }
+  .paywall-card { text-align: center; }
+  .paywall-lock { font-size: 36px; margin-bottom: 8px; }
+  #paywallTitle { margin: 0 0 8px; }
+  .auth-btn:disabled { background: #2a323d; color: #6b7280; cursor: not-allowed; }
   #authOverlay {
     position: fixed; inset: 0; z-index: 99999;
     display: flex; align-items: center; justify-content: center;
@@ -2114,6 +2125,16 @@
     <button id="alertsPanelClose" class="alerts-panel-close">✕</button>
   </div>
   <div id="alertsPanelBody" class="alerts-panel-body"></div>
+</div>
+<div id="paywallOverlay" class="hidden">
+  <div class="auth-card paywall-card">
+    <div class="paywall-lock">🔒</div>
+    <h1 id="paywallTitle">Subscription required</h1>
+    <p class="auth-sub">This dashboard is part of a paid plan. Subscribe to unlock the full screener and KPI scorecard.</p>
+    <button class="auth-btn" id="paywallSubscribeBtn" disabled>Subscribe — coming soon</button>
+    <button class="auth-link" id="paywallRecheckBtn">I've upgraded — check again</button>
+    <button class="auth-link" id="paywallSignOutBtn">Sign out</button>
+  </div>
 </div>
 <div class="header">
   <div>
@@ -10527,6 +10548,12 @@ const _origToggleTechnical = toggleTechnical;
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
   import {
+    getFirestore,
+    doc,
+    getDoc,
+    setDoc
+  } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+  import {
     getAuth,
     onAuthStateChanged,
     signInWithEmailAndPassword,
@@ -10564,6 +10591,7 @@ const _origToggleTechnical = toggleTechnical;
   document.addEventListener('visibilitychange', refreshIfStale);
   window.addEventListener('focus', refreshIfStale);
   const auth = getAuth(app);
+  const db = getFirestore(app);
 
   const overlay = document.getElementById('authOverlay');
   const userMenu = document.getElementById('authUserMenu');
@@ -10575,6 +10603,9 @@ const _origToggleTechnical = toggleTechnical;
   const alertsBtn = document.getElementById('authAlertsBtn');
   const manageBtn = document.getElementById('authManageBtn');
   const alertsPanel = document.getElementById('alertsPanel');
+  const paywallOverlay = document.getElementById('paywallOverlay');
+  const paywallRecheckBtn = document.getElementById('paywallRecheckBtn');
+  const paywallSignOutBtn = document.getElementById('paywallSignOutBtn');
   const signOutItem = document.getElementById('authSignOutItem');
   const emailEl = document.getElementById('authEmail');
   const passEl = document.getElementById('authPassword');
@@ -10655,11 +10686,16 @@ const _origToggleTechnical = toggleTechnical;
   });
   document.getElementById('alertsPanelClose').addEventListener('click', () => alertsPanel.classList.add('hidden'));
 
-  manageBtn.addEventListener('click', () => {
+  manageBtn.addEventListener('click', async () => {
     dropdown.classList.add('hidden');
-    // Placeholder for now — this is a natural place to surface subscription
-    // status/plan management once Stripe billing is wired in (Step 4+).
-    alert('Account management is coming soon — this is where your subscription and plan details will appear.');
+    const user = auth.currentUser;
+    if (!user) return;
+    const subscribed = await ensureUserDoc(user);
+    // Placeholder UI for now — real plan management (cancel, change plan,
+    // billing portal) lands once Stripe is wired in.
+    alert(subscribed
+      ? 'Plan: Pro\n\nYou have full access to the dashboard. Billing management is coming soon.'
+      : 'Plan: Free (not subscribed)\n\nUpgrade to unlock the full screener and KPI scorecard.');
   });
 
   // ===== "New initial buying" alerts: fresh buy signals dated today =====
@@ -10735,6 +10771,52 @@ const _origToggleTechnical = toggleTechnical;
     }
   }
 
+  // ===== Subscription status (Firestore) =====
+  // On first sign-in, create users/{uid} with subscribed:false. On every
+  // sign-in, re-read it so a manual flip in the Firestore console (our
+  // stand-in for real billing, for now) is picked up.
+  async function ensureUserDoc(user) {
+    const ref = doc(db, 'users', user.uid);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) {
+      await setDoc(ref, {
+        email: user.email || '',
+        displayName: user.displayName || '',
+        subscribed: false,
+        createdAt: Date.now()
+      });
+      return false;
+    }
+    const data = snap.data();
+    return !!data.subscribed;
+  }
+
+  function applySubscriptionState(subscribed) {
+    if (subscribed) {
+      document.body.classList.remove('paywall-locked');
+      paywallOverlay.classList.add('hidden');
+      checkFreshSignalsToday();
+    } else {
+      document.body.classList.add('paywall-locked');
+      paywallOverlay.classList.remove('hidden');
+    }
+  }
+
+  paywallRecheckBtn.addEventListener('click', async () => {
+    const user = auth.currentUser;
+    if (!user) return;
+    paywallRecheckBtn.disabled = true;
+    paywallRecheckBtn.textContent = 'Checking…';
+    try {
+      const subscribed = await ensureUserDoc(user);
+      applySubscriptionState(subscribed);
+    } finally {
+      paywallRecheckBtn.disabled = false;
+      paywallRecheckBtn.textContent = "I've upgraded — check again";
+    }
+  });
+  paywallSignOutBtn.addEventListener('click', () => signOut(auth));
+
   function checkFreshSignalsToday() {
     const signals = findFreshSignalsToday();
     const badge = document.getElementById('authAlertBadge');
@@ -10772,7 +10854,7 @@ const _origToggleTechnical = toggleTechnical;
     }
   });
 
-  onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, async (user) => {
     if (user) {
       document.body.classList.remove('authgate-locked');
       overlay.classList.add('hidden');
@@ -10784,10 +10866,13 @@ const _origToggleTechnical = toggleTechnical;
       dropdownName.textContent = displayName || email || 'Account';
       dropdownEmail.textContent = email;
       userMenu.style.display = 'block';
-      checkFreshSignalsToday();
+      const subscribed = await ensureUserDoc(user);
+      applySubscriptionState(subscribed);
     } else {
       document.body.classList.add('authgate-locked');
+      document.body.classList.remove('paywall-locked');
       overlay.classList.remove('hidden');
+      paywallOverlay.classList.add('hidden');
       userMenu.style.display = 'none';
       dropdown.classList.add('hidden');
       alertsPanel.classList.add('hidden');
