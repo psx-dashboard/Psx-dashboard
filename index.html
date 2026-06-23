@@ -2023,6 +2023,58 @@
     border-radius: 8px; font-size: 13px; color: #1f2937; cursor: pointer;
   }
   .auth-dropdown-item:hover { background: #f3f4f6; }
+  .auth-dropdown-item { position: relative; display: flex; align-items: center; justify-content: space-between; }
+  .auth-alert-badge {
+    position: absolute; top: -3px; right: -3px; min-width: 16px; height: 16px; padding: 0 3px;
+    border-radius: 8px; background: #ff4d4f; color: #fff; font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; line-height: 1;
+    border: 2px solid #fff;
+  }
+  .auth-alert-badge.hidden { display: none; }
+  .auth-alerts-count {
+    min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: #ff4d4f;
+    color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+  }
+  .auth-alerts-count.hidden { display: none; }
+
+  .alerts-panel {
+    position: fixed; top: 60px; right: 14px; z-index: 99999; width: 320px; max-height: 70vh;
+    background: #fff; border-radius: 12px; box-shadow: 0 10px 34px rgba(0,0,0,0.28);
+    overflow: hidden; display: flex; flex-direction: column;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  }
+  .alerts-panel.hidden { display: none; }
+  .alerts-panel-header {
+    display: flex; align-items: center; justify-content: space-between; padding: 12px 14px;
+    background: #0b0f14; color: #fff; font-size: 13px; font-weight: 700;
+  }
+  .alerts-panel-close { background: none; border: none; color: #aab; cursor: pointer; font-size: 14px; }
+  .alerts-panel-close:hover { color: #fff; }
+  .alerts-panel-body { overflow-y: auto; padding: 6px; }
+  .alert-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 9px 8px; border-radius: 8px; cursor: default;
+  }
+  .alert-row:hover { background: #f3f4f6; }
+  .alert-row-left { display: flex; flex-direction: column; min-width: 0; }
+  .alert-row-ticker { font-size: 13px; font-weight: 700; color: #1f2937; }
+  .alert-row-name { font-size: 11px; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 190px; }
+  .alert-row-tag {
+    font-size: 10px; font-weight: 700; padding: 3px 7px; border-radius: 6px; white-space: nowrap;
+    background: #e6f9f1; color: #00a36c;
+  }
+  .alerts-panel-empty { padding: 24px 14px; text-align: center; color: #6b7280; font-size: 13px; }
+
+  .alert-toast {
+    position: fixed; top: 60px; right: 14px; z-index: 99997; width: 300px;
+    background: #0b0f14; color: #eef2f6; border-radius: 12px; padding: 14px 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    border-left: 4px solid #00d4aa;
+  }
+  .alert-toast.hidden { display: none; }
+  .alert-toast-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .alert-toast-body { font-size: 12px; color: #aab2bd; }
+  .alert-toast-close { position: absolute; top: 8px; right: 10px; background: none; border: none; color: #6b7280; cursor: pointer; font-size: 13px; }
 </style>
 <div id="authOverlay">
   <div class="auth-card">
@@ -2041,7 +2093,7 @@
   </div>
 </div>
 <div id="authUserMenu" class="auth-user-menu">
-  <button id="authAvatarBtn" class="auth-avatar-btn">?</button>
+  <button id="authAvatarBtn" class="auth-avatar-btn">?<span id="authAlertBadge" class="auth-alert-badge hidden">0</span></button>
   <div id="authDropdown" class="auth-dropdown hidden">
     <div class="auth-dropdown-header">
       <div class="auth-avatar-lg" id="authAvatarLg">?</div>
@@ -2051,10 +2103,17 @@
       </div>
     </div>
     <div class="auth-dropdown-sep"></div>
-    <button class="auth-dropdown-item" id="authAlertsBtn">🔔 Alerts</button>
+    <button class="auth-dropdown-item" id="authAlertsBtn">🔔 Alerts<span id="authAlertsCount" class="auth-alerts-count hidden">0</span></button>
     <button class="auth-dropdown-item" id="authManageBtn">⚙️ Manage account</button>
     <button class="auth-dropdown-item" id="authSignOutItem">↪️ Sign out</button>
   </div>
+</div>
+<div id="alertsPanel" class="alerts-panel hidden">
+  <div class="alerts-panel-header">
+    <span>🔔 New Buy Signals Today</span>
+    <button id="alertsPanelClose" class="alerts-panel-close">✕</button>
+  </div>
+  <div id="alertsPanelBody" class="alerts-panel-body"></div>
 </div>
 <div class="header">
   <div>
@@ -10488,6 +10547,22 @@ const _origToggleTechnical = toggleTechnical;
   };
 
   const app = initializeApp(firebaseConfig);
+
+  // ===== Auto-refresh on return =====
+  // Data is baked into this HTML at publish time, so the only way to pick up
+  // a newer version is a full page reload. If the user leaves this tab open
+  // (or backgrounds the mobile browser) and comes back after a while, this
+  // silently reloads so they land on whatever's currently published instead
+  // of stale in-memory data.
+  const PAGE_LOAD_TIME = Date.now();
+  const AUTO_REFRESH_INTERVAL_MS = 60 * 60 * 1000; // 1 hour
+  function refreshIfStale() {
+    if (document.visibilityState === 'visible' && Date.now() - PAGE_LOAD_TIME > AUTO_REFRESH_INTERVAL_MS) {
+      window.location.reload();
+    }
+  }
+  document.addEventListener('visibilitychange', refreshIfStale);
+  window.addEventListener('focus', refreshIfStale);
   const auth = getAuth(app);
 
   const overlay = document.getElementById('authOverlay');
@@ -10499,6 +10574,7 @@ const _origToggleTechnical = toggleTechnical;
   const dropdownEmail = document.getElementById('authDropdownEmail');
   const alertsBtn = document.getElementById('authAlertsBtn');
   const manageBtn = document.getElementById('authManageBtn');
+  const alertsPanel = document.getElementById('alertsPanel');
   const signOutItem = document.getElementById('authSignOutItem');
   const emailEl = document.getElementById('authEmail');
   const passEl = document.getElementById('authPassword');
@@ -10571,16 +10647,112 @@ const _origToggleTechnical = toggleTechnical;
   signOutItem.addEventListener('click', () => { dropdown.classList.add('hidden'); signOut(auth); });
   alertsBtn.addEventListener('click', () => {
     dropdown.classList.add('hidden');
-    // Placeholder for now — this is where "new initial buying" alert
-    // notifications will surface once that feature is built.
-    alert('Alerts are coming soon — this is where new initial-buying signal notifications will appear.');
+    alertsPanel.classList.toggle('hidden');
   });
+  document.addEventListener('click', (e) => {
+    if (alertsPanel.contains(e.target) || e.target === alertsBtn) return;
+    alertsPanel.classList.add('hidden');
+  });
+  document.getElementById('alertsPanelClose').addEventListener('click', () => alertsPanel.classList.add('hidden'));
+
   manageBtn.addEventListener('click', () => {
     dropdown.classList.add('hidden');
     // Placeholder for now — this is a natural place to surface subscription
     // status/plan management once Stripe billing is wired in (Step 4+).
     alert('Account management is coming soon — this is where your subscription and plan details will appear.');
   });
+
+  // ===== "New initial buying" alerts: fresh buy signals dated today =====
+  // A stock counts as a fresh signal today if its Signal Status starts with
+  // "Fresh buy signal" and its Signal date (YYYYMMDD) matches today's date.
+  function getTodayYYYYMMDD() {
+    const d = new Date();
+    return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+  }
+
+  function findFreshSignalsToday() {
+    if (typeof SOURCE_DATA === 'undefined' || !Array.isArray(SOURCE_DATA)) return [];
+    const today = getTodayYYYYMMDD();
+    return SOURCE_DATA.filter(d =>
+      d['Signal date'] === today &&
+      typeof d['Signal Status'] === 'string' &&
+      d['Signal Status'].indexOf('Fresh buy signal') === 0
+    );
+  }
+
+  function renderAlertsPanel(signals) {
+    const body = document.getElementById('alertsPanelBody');
+    if (!signals.length) {
+      body.innerHTML = '<div class="alerts-panel-empty">No new buy signals today yet. Check back after the next data update.</div>';
+      return;
+    }
+    body.innerHTML = signals.map(d => `
+      <div class="alert-row">
+        <div class="alert-row-left">
+          <span class="alert-row-ticker">${d.Ticker}</span>
+          <span class="alert-row-name">${d.Name || ''}</span>
+        </div>
+        <span class="alert-row-tag">${d['Signal Status']}</span>
+      </div>
+    `).join('');
+  }
+
+  function showAlertToast(signals) {
+    const existing = document.getElementById('alertToast');
+    if (existing) existing.remove();
+    const toast = document.createElement('div');
+    toast.id = 'alertToast';
+    toast.className = 'alert-toast';
+    const tickers = signals.slice(0, 4).map(d => d.Ticker).join(', ');
+    const more = signals.length > 4 ? ` +${signals.length - 4} more` : '';
+    toast.innerHTML = `
+      <button class="alert-toast-close">✕</button>
+      <div class="alert-toast-title">🔔 ${signals.length} new buy signal${signals.length > 1 ? 's' : ''} today</div>
+      <div class="alert-toast-body">${tickers}${more}</div>
+    `;
+    document.body.appendChild(toast);
+    toast.querySelector('.alert-toast-close').addEventListener('click', () => toast.remove());
+    setTimeout(() => { if (toast.parentNode) toast.remove(); }, 12000);
+  }
+
+  function maybeShowBrowserNotification(signals) {
+    // Best-effort desktop/mobile popup while the tab is open. True background
+    // push (delivered even when the app/tab is closed) needs a service worker
+    // + push subscription + a backend (e.g. Firebase Cloud Messaging) — a
+    // separate, bigger build than this in-page notification.
+    if (!('Notification' in window)) return;
+    const fire = () => {
+      const tickers = signals.slice(0, 4).map(d => d.Ticker).join(', ');
+      new Notification('New buy signal' + (signals.length > 1 ? 's' : ''), {
+        body: `${signals.length} stock${signals.length > 1 ? 's' : ''} today: ${tickers}`,
+        icon: undefined
+      });
+    };
+    if (Notification.permission === 'granted') {
+      fire();
+    } else if (Notification.permission !== 'denied') {
+      Notification.requestPermission().then(perm => { if (perm === 'granted') fire(); });
+    }
+  }
+
+  function checkFreshSignalsToday() {
+    const signals = findFreshSignalsToday();
+    const badge = document.getElementById('authAlertBadge');
+    const countEl = document.getElementById('authAlertsCount');
+    if (signals.length > 0) {
+      badge.textContent = signals.length;
+      badge.classList.remove('hidden');
+      countEl.textContent = signals.length;
+      countEl.classList.remove('hidden');
+      showAlertToast(signals);
+      maybeShowBrowserNotification(signals);
+    } else {
+      badge.classList.add('hidden');
+      countEl.classList.add('hidden');
+    }
+    renderAlertsPanel(signals);
+  }
+
 
   const googleBtn = document.getElementById('authGoogleBtn');
   const googleProvider = new GoogleAuthProvider();
@@ -10612,11 +10784,15 @@ const _origToggleTechnical = toggleTechnical;
       dropdownName.textContent = displayName || email || 'Account';
       dropdownEmail.textContent = email;
       userMenu.style.display = 'block';
+      checkFreshSignalsToday();
     } else {
       document.body.classList.add('authgate-locked');
       overlay.classList.remove('hidden');
       userMenu.style.display = 'none';
       dropdown.classList.add('hidden');
+      alertsPanel.classList.add('hidden');
+      const toast = document.getElementById('alertToast');
+      if (toast) toast.remove();
     }
   });
 </script>
