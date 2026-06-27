@@ -518,6 +518,15 @@
   .negative { color: var(--danger); }
   .neutral { color: var(--warn); }
   .ticker-link { color: var(--accent3); cursor: pointer; font-weight: 700; font-size: 13px; }
+  .ticker-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 14px; height: 14px; border-radius: 50%; margin-left: 4px;
+    font-size: 9px; font-weight: 800; color: #fff; vertical-align: middle;
+    cursor: default;
+  }
+  .ticker-badge-turn { background: #f59e0b; }
+  .ticker-badge-ni { background: #22c55e; }
+  .ticker-badge-kmi { background: none; width: auto; height: auto; color: #0d9e7e; }
   .ticker-link:hover { text-decoration: underline; color: var(--accent); }
 
   /* SECTOR TABLE — frozen first column */
@@ -3571,6 +3580,11 @@
           <button class="fin-toggle-btn" id="dailyToggleBtn" onclick="toggleDaily()" title="Show Price, Rel Vol, Volume and 1D % columns"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg><span id="dailyToggleLabel">Show Daily Movement</span></button>
           <button class="fin-toggle-btn" id="perfToggleBtn" onclick="togglePerformance()" title="Hide/show performance return columns"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg><span id="perfToggleLabel">Show Performance</span></button>
           <span id="screenerCount" style="font-size:11px; color: var(--text2); margin-left: 4px;">497 companies</span>
+          <span style="font-size:10px; color: var(--text2); margin-left: 12px; display: inline-flex; align-items: center; gap: 10px;">
+            <span style="display:inline-flex;align-items:center;gap:3px;"><span class="ticker-badge ticker-badge-kmi" style="margin-left:0;"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M12 2c-1.1 0-2 .9-2 2 0 .74.4 1.38 1 1.72V7H9a3 3 0 0 0-3 3v1H4v9h16v-9h-2v-1a3 3 0 0 0-3-3h-2V5.72c.6-.34 1-.98 1-1.72 0-1.1-.9-2-2-2zM7 11a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v1H7v-1zM5 13h2v6H5v-6zm12 0h2v6h-2v-6zM9 14h6v5H9v-5z"></path></svg></span>KMI</span>
+            <span style="display:inline-flex;align-items:center;gap:3px;"><span class="ticker-badge ticker-badge-ni" style="margin-left:0;">N</span>Net Inc&gt;Op Inc</span>
+            <span style="display:inline-flex;align-items:center;gap:3px;"><span class="ticker-badge ticker-badge-turn" style="margin-left:0;">T</span>Turnaround</span>
+          </span>
       </div>
       <script>
         function toggleFiltersWrap() {
@@ -9220,6 +9234,20 @@ function showToast(msg) {
   clearTimeout(t._timeout);
   t._timeout = setTimeout(() => { t.style.opacity = '0'; }, 2500);
 }
+function tickerBadges(d) {
+  let badges = '';
+  if (String(d.Index||'').includes('KMI')) {
+    badges += '<span class="ticker-badge ticker-badge-kmi" title="KMI Index member"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M12 2c-1.1 0-2 .9-2 2 0 .74.4 1.38 1 1.72V7H9a3 3 0 0 0-3 3v1H4v9h16v-9h-2v-1a3 3 0 0 0-3-3h-2V5.72c.6-.34 1-.98 1-1.72 0-1.1-.9-2-2-2zM7 11a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v1H7v-1zM5 13h2v6H5v-6zm12 0h2v6h-2v-6zM9 14h6v5H9v-5z"></path></svg></span>';
+  }
+  if ((parseFloat(d['NI > OI'])||0) > 0) {
+    badges += '<span class="ticker-badge ticker-badge-ni" title="Net Inc > Op Inc">N</span>';
+  }
+  if ((parseFloat(d['Loss narrow'])||0) > 0) {
+    badges += '<span class="ticker-badge ticker-badge-turn" title="Turnaround Candidate">T</span>';
+  }
+  return badges;
+}
+
 function renderScreenerPage() {
   const start = (screenerPage - 1) * PAGE_SIZE;
   const page = filteredScreener.slice(start, start + PAGE_SIZE);
@@ -9230,7 +9258,7 @@ function renderScreenerPage() {
     const score = d['total improvement'];
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td class="ticker-link" onclick="switchTab('company');pickTicker('${String(d.Ticker)}')">${d.Ticker}</td>
+      <td class="ticker-link" onclick="switchTab('company');pickTicker('${String(d.Ticker)}')">${d.Ticker}${tickerBadges(d)}</td>
       <td style="max-width:180px; overflow:hidden; text-overflow:ellipsis; color:var(--text); font-weight:500">${d.Name||'—'}</td>
       <td class="screener-sector-cell" style="max-width:140px; overflow:hidden; text-overflow:ellipsis">${d.Sector||'—'}</td>
       <td class="screener-fin-col mono ${valColor(dget(d,'Latest EPS  Q'))}">${fmt(dget(d,'Latest EPS  Q'),3)}</td>
