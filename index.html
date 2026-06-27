@@ -8676,8 +8676,15 @@ function positionMselPanel(key) {
   if (!panel || !btn) return;
   const rect = btn.getBoundingClientRect();
   const panelWidth = panel.offsetWidth || 240;
-  let left = rect.right - panelWidth;
-  left = Math.max(8, Math.min(left, window.innerWidth - panelWidth - 8));
+  // Prefer aligning with the button's own left edge, like a normal dropdown.
+  // Only shift it left if that would push the panel off the right edge of
+  // the screen — and never push it further left than the button itself
+  // needs to go to stay on-screen.
+  let left = rect.left;
+  if (left + panelWidth > window.innerWidth - 8) {
+    left = window.innerWidth - panelWidth - 8;
+  }
+  left = Math.max(8, left);
   const top = rect.bottom + 4;
   panel.style.position = 'fixed';
   panel.style.top = top + 'px';
