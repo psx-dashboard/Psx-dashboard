@@ -2187,7 +2187,7 @@
       </div>
     </div>
     <div id="uploadStatus" class="upload-status"></div>
-    <button id="installAppBtn" class="install-btn" onclick="handleInstallClick()" title="Install PSX Dashboard to your device"><span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></span><span>Install App</span></button>
+    <button id="installAppBtn" class="install-btn" onclick="handleInstallClick()" title="Install Nexus PSX to your device"><span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></span><span>Install App</span></button>
     <button id="themeToggleBtn" onclick="toggleTheme()" title="Cycle theme: Dark → Light → Bloomberg → TradingView → Cream" style="background: var(--surface2); border-color: var(--border); border-radius: var(--radius-sm); cursor: pointer; font-size: 14px; padding: 5px 11px; line-height: 1; color: var(--text2); transition: 0.2s; display: flex; align-items: center; gap: 6px;" onmouseenter="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text2)'"><span id="themeIcon">🌙</span><span id="themeLabel">LIGHT</span></button>
     <div id="authUserMenu" class="auth-user-menu">
       <button id="authAvatarBtn" class="auth-avatar-btn">?<span id="authAlertBadge" class="auth-alert-badge hidden">0</span></button>
@@ -6514,7 +6514,7 @@
         <div style="font-size:12px; font-weight:700; color:var(--text); margin-bottom:10px;">How to get your token:</div>
         <ol style="font-size:12px; color:var(--text2); line-height:2.2; margin:0; padding-left:18px;">
           <li>Go to <a href="https://github.com/settings/tokens/new" target="_blank" style="color:var(--accent3);">github.com/settings/tokens/new</a></li>
-          <li>Give it a name e.g. <em>PSX Dashboard</em></li>
+          <li>Give it a name e.g. <em>Nexus PSX</em></li>
           <li>Set expiration to <strong style="color:var(--text);">No expiration</strong></li>
           <li>Under scopes, check only <strong style="color:var(--accent3);">gist</strong></li>
           <li>Click <strong style="color:var(--text);">Generate token</strong> and copy it</li>
@@ -6536,7 +6536,7 @@
           <div style="font-size:16px; font-weight:700; color:var(--text);">⭐ My Watchlist</div>
           <div style="font-size:12px; color:var(--text2); margin-top:2px;">
             Synced with GitHub Gist ·
-            <span id="wlUserLabel" style="color:var(--accent3);">@psx-dashboard</span>
+            <span id="wlUserLabel" style="color:var(--accent3);">@Nexus-PSX</span>
             <span id="wlSyncStatus" style="margin-left: 8px; color: var(--positive);">✓ Synced</span>
           </div>
         </div>
@@ -9028,7 +9028,7 @@ async function findOrCreateGist() {
     const cr = await fetch('https://api.github.com/gists', {
       method: 'POST',
       headers: { Authorization: `token ${wlToken}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
-      body: JSON.stringify({ description: 'PSX Dashboard Watchlist', public: false, files: { [WL_GIST_FILENAME]: { content: '[]' } } })
+      body: JSON.stringify({ description: 'Nexus PSX Watchlist', public: false, files: { [WL_GIST_FILENAME]: { content: '[]' } } })
     });
     const g = await cr.json();
     wlGistId = g.id;
@@ -9515,28 +9515,28 @@ function handleInstallClick() {
 
   if (isIOSDevice()) {
     // iOS has no programmatic install API — guide the user manually.
-    title.textContent = 'Add PSX Dashboard to Home Screen';
+    title.textContent = 'Add Nexus PSX to Home Screen';
     body.textContent = 'iOS doesn\'t allow apps to install themselves automatically — just follow these steps in Safari:';
     steps.style.display = 'block';
     steps.innerHTML = '1. Tap the <b>Share</b> icon (square with an arrow) in Safari\'s toolbar<br>'
       + '2. Scroll down and tap <b>"Add to Home Screen"</b><br>'
       + '3. Tap <b>"Add"</b> in the top-right corner<br><br>'
-      + 'The PSX Dashboard icon will then appear on your home screen.';
+      + 'The Nexus PSX icon will then appear on your home screen.';
     cancelBtn.style.display = 'none';
     confirmBtn.textContent = 'Got it';
     confirmBtn.onclick = closeInstallModal;
   } else if (deferredInstallPrompt) {
     // Chrome / Edge / Android — native install prompt available after confirmation.
-    title.textContent = 'Install PSX Dashboard?';
-    body.textContent = 'Add PSX Dashboard to your home screen or desktop for quick, full-screen access — just like a native app.';
+    title.textContent = 'Install Nexus PSX?';
+    body.textContent = 'Add Nexus PSX to your home screen or desktop for quick, full-screen access — just like a native app.';
     steps.style.display = 'none';
     cancelBtn.style.display = '';
     confirmBtn.textContent = 'Install';
     confirmBtn.onclick = confirmInstall;
   } else {
     // Browser supports installing but hasn't fired the event yet, or doesn't support it at all.
-    title.textContent = 'Install PSX Dashboard';
-    body.textContent = 'Use your browser\'s built-in install option to add PSX Dashboard to your device:';
+    title.textContent = 'Install Nexus PSX';
+    body.textContent = 'Use your browser\'s built-in install option to add Nexus PSX to your device:';
     steps.style.display = 'block';
     steps.innerHTML = '<b>Desktop Chrome/Edge:</b> click the install icon (⊕ or computer icon) in the address bar.<br><br>'
       + '<b>Android Chrome:</b> open the ⋮ menu → "Install app" or "Add to Home screen".';
@@ -9603,9 +9603,9 @@ async function confirmInstall() {
 <!-- Install App Modal -->
 <div class="modal-backdrop" id="installModal">
   <div class="modal" id="installModalBox">
-    <img class="install-icon-preview" id="installIconPreview" src="" alt="PSX Dashboard icon">
-    <div class="modal-title" id="installModalTitle">Install PSX Dashboard?</div>
-    <div class="modal-body" id="installModalBody">Add PSX Dashboard to your home screen for quick, full-screen access — just like a native app.</div>
+    <img class="install-icon-preview" id="installIconPreview" src="" alt="Nexus PSX icon">
+    <div class="modal-title" id="installModalTitle">Install Nexus PSX?</div>
+    <div class="modal-body" id="installModalBody">Add Nexus PSX to your home screen for quick, full-screen access — just like a native app.</div>
     <div class="install-steps" id="installSteps" style="display:none;"></div>
     <div class="modal-btn-row">
       <button class="modal-secondary-btn" id="installCancelBtn" onclick="closeInstallModal()">Cancel</button>
