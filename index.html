@@ -1002,17 +1002,6 @@
     .header-title { font-size: 13px; }
     .header-subtitle { font-size: 11px; }
     .header-right { gap: 6px; flex-wrap: wrap; }
-    /* The header wraps on mobile, so the avatar button doesn't always land
-       at the screen's right edge like it does on desktop. Anchor the
-       dropdown to the viewport itself instead of the button's position, so
-       it can never spill off either edge regardless of where it wraps to. */
-    .auth-dropdown {
-      position: fixed;
-      top: 60px;
-      right: 10px;
-      left: 10px;
-      width: auto;
-    }
     .badge { font-size: 11px; padding: 4px 8px; }
     .upload-btn { font-size: 12px; padding: 6px 12px; }
 
@@ -7645,14 +7634,7 @@ function loadTicker(ticker) {
   const sigDate = dget(d,'Signal date');
   const sigStatus = dget(d,'Signal Status');
   const sigReturn = dget(d,'Signal Return %');
-  // Format signal date: 20260511 → 11 May 2026
-  let sigDateStr = '—';
-  if (sigDate && String(sigDate).length === 8) {
-    const sd = String(sigDate);
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const yr = sd.slice(0,4), mo = parseInt(sd.slice(4,6))-1, dy = sd.slice(6,8);
-    sigDateStr = `${parseInt(dy)} ${months[mo]} ${yr}`;
-  }
+  const sigDateStr = sigDate ? fmtSignalDate(sigDate) : '—';
   setEl('ciSignalDate', sigDateStr);
   const sigStatusStr = sigStatusLabel(sigStatus) || 'No trade';
   const sigCode = sigStatusCode(sigStatus);
@@ -9219,7 +9201,7 @@ function renderWatchlist(mode) {
         <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis">${d.Name||'—'}</td>
         <td class="screener-hide-mobile" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;color:var(--text2)">${d.Sector||'—'}</td>
         <td class="mono"><span class="pill ${score>=80?'pill-good':score>=50?'pill-neutral':'pill-bad'}">${score!=null?score:'—'}</span></td>
-        <td class="mono">${dget(d,'Signal date')||'—'}</td>
+        <td class="mono">${fmtSignalDate(dget(d,'Signal date'))}</td>
         <td class="mono">${(()=>{const n=toNum(dget(d,'Signal Price'));return n!=null?n.toFixed(2):'—';})()}</td>
         <td class="mono">${sigHtml}</td>
         <td class="mono ${valColor(ret)}">${retStr}</td>
@@ -9280,7 +9262,7 @@ function renderScreenerPage() {
       <td class="screener-fin-col mono">${fmt(dget(d,'P/E Ratio'),2)}</td>
       <td class="screener-fin-col mono">${fmtMarketCap(dget(d,'Market Cap'))}</td>
       <td class="mono"><span class="pill ${score>=80?'pill-good':score>=50?'pill-neutral':'pill-bad'}">${score!=null?score:'—'}</span></td>
-      <td class="mono screener-tech-col">${dget(d,'Signal date') || '—'}</td>   
+      <td class="mono screener-tech-col">${fmtSignalDate(dget(d,'Signal date'))}</td>   
       <td class="mono screener-tech-col">${(()=>{const n=toNum(dget(d,'Signal Price'));return n!=null?n.toFixed(2):'—';})()}</td>
       <td class="mono screener-tech-col ${valColor(dget(d,'Signal Return %'))}">${(()=>{const n=toNum(dget(d,'Signal Return %'));return n!=null?(n>=0?'+':'')+n.toFixed(1)+'%':'—'})()}</td>
       <td class="mono screener-tech-col">${(()=>{const raw=dget(d,'Signal Status');const s=sigStatusLabel(raw);if(s==null)return '—';const pc=sigStatusPillClass(raw);return `<span class="pill ${pc}" style="font-size:10px;padding:2px 7px;text-transform:none;">${s}</span>`;})()}</td>
@@ -9371,6 +9353,17 @@ function fmt(v, dec=2) {
   const n = toNum(v);
   if (n == null) return '—';
   return n.toFixed(dec);
+}
+// Signal date is stored as an 8-digit YYYYMMDD number (e.g. 20260511 → 11 May 2026).
+// Shared by the Stock Screener table and Company View so both read it identically.
+function fmtSignalDate(v) {
+  if (v == null) return '—';
+  const sd = String(v);
+  if (sd.length !== 8) return sd || '—';
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const yr = sd.slice(0,4), mo = parseInt(sd.slice(4,6),10)-1, dy = sd.slice(6,8);
+  if (mo < 0 || mo > 11) return sd;
+  return `${parseInt(dy,10)} ${months[mo]} ${yr}`;
 }
 // Signal Status is now encoded as a numeric score in the source data.
 // Some rows may still carry the older text labels — map those to the same codes too.
@@ -10382,6 +10375,20 @@ function toggleTheme() {
   .top-grid-2 { grid-template-columns: 1fr; }
   .top-grid-3 { grid-template-columns: 1fr; }
   .top-cards-grid { grid-template-columns: repeat(2, 1fr); }
+  /* The header wraps on mobile, so the avatar button doesn't always land
+     at the screen's right edge like it does on desktop. Anchor the
+     dropdown to the viewport itself instead of the button's position, so
+     it can never spill off either edge regardless of where it wraps to.
+     (Placed in this later stylesheet block on purpose — an earlier, narrower
+     mobile rule was being silently overridden by the unconditional desktop
+     .auth-dropdown rule because that rule comes later in the cascade.) */
+  .auth-dropdown {
+    position: fixed !important;
+    top: 60px !important;
+    right: 10px !important;
+    left: 10px !important;
+    width: auto !important;
+  }
 }
 </style>
 
