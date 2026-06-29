@@ -2138,6 +2138,10 @@
     <span style="display:flex;align-items:center;gap:7px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>New Buy Signals Today</span>
     <button id="alertsPanelClose" class="alerts-panel-close">✕</button>
   </div>
+  <label style="display:flex; align-items:center; gap:6px; padding:8px 14px; font-size:11px; color:var(--text2); cursor:pointer; border-bottom:1px solid var(--border);">
+    <input type="checkbox" id="alertsWatchlistOnlyToggle" style="margin:0;cursor:pointer;">
+    Only show my Watchlist tickers
+  </label>
   <div id="alertsPanelBody" class="alerts-panel-body"></div>
 </div>
 <div class="header">
@@ -6346,7 +6350,7 @@
       <div style="padding:16px 0 8px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
         <div>
           <div style="font-size:16px; font-weight:700; color:var(--text);">⭐ My Watchlist</div>
-          <div style="font-size:12px; color:var(--text2); margin-top:2px;">Saved in this browser only —
+          <div style="font-size:12px; color:var(--text2); margin-top:2px;" id="wlSyncNote">Saved in this browser only —
             <span onclick="wlShowConnect()" style="color:var(--accent3); cursor:pointer; text-decoration:underline;">Connect GitHub to sync across devices →</span>
           </div>
         </div>
@@ -8142,11 +8146,11 @@ function buildPeerScoreChart(ticker, sector) {
   const th = getChartTheme();
   const bgColors = peers.map((p, i) => {
     if (i === selectedIdx) return th.selectedBar;
-    return p.score >= 60 ? th.scoreHigh : p.score >= 40 ? th.scoreMid : th.scoreLow;
+    return p.score >= 80 ? th.scoreHigh : p.score >= 40 ? th.scoreMid : th.scoreLow;
   });
   const borderColors = peers.map((p, i) => {
     if (i === selectedIdx) return th.selectedBarBorder;
-    return p.score >= 60 ? th.scoreHighBorder : p.score >= 40 ? th.scoreMidBorder : th.scoreLowBorder;
+    return p.score >= 80 ? th.scoreHighBorder : p.score >= 40 ? th.scoreMidBorder : th.scoreLowBorder;
   });
   const borderWidths = peers.map((_, i) => i === selectedIdx ? 2.5 : 1);
 
@@ -8318,8 +8322,8 @@ function buildSectorChart() {
   const ctx = canvas.getContext('2d');
   const th = getChartTheme();
 
-  const bgColors  = sorted.map(s => s.totalScore >= 60 ? th.scoreHigh  : s.totalScore >= 40 ? th.scoreMid  : th.scoreLow);
-  const brdColors = sorted.map(s => s.totalScore >= 60 ? th.scoreHighBorder : s.totalScore >= 40 ? th.scoreMidBorder : th.scoreLowBorder);
+  const bgColors  = sorted.map(s => s.totalScore >= 80 ? th.scoreHigh  : s.totalScore >= 40 ? th.scoreMid  : th.scoreLow);
+  const brdColors = sorted.map(s => s.totalScore >= 80 ? th.scoreHighBorder : s.totalScore >= 40 ? th.scoreMidBorder : th.scoreLowBorder);
 
   charts['sectors'] = new Chart(ctx, {
     type: 'bar',
@@ -8894,7 +8898,7 @@ function toggleDaily() {
   document.getElementById('dailyToggleLabel').textContent = hidden ? 'Show Daily Movement' : 'Hide Daily Movement';
 }
 
-// ===== WATCHLIST — dual mode: localStorage (guest) + GitHub Gist (synced) =====
+// ===== WATCHLIST — three modes: localStorage (guest) + Firestore (signed-in account) + GitHub Gist (legacy sync option) =====
 const WL_GIST_FILENAME = 'psx_watchlist.json';
 const WL_LOCAL_KEY     = 'psx_watchlist_local';
 let wlToken    = null;
@@ -8902,7 +8906,9 @@ let wlGistId   = null;
 let wlUsername = null;
 let wlList     = [];
 let wlSaving   = false;
-let wlMode     = 'local'; // 'local' | 'github'
+let wlMode     = 'local'; // 'local' | 'firestore' | 'github'
+let wlUID      = null;
+let wlEmail    = null;
 
 function wlLocalGet(k)    { try { return localStorage.getItem(k); }    catch { return null; } }
 function wlLocalSet(k, v) { try { localStorage.setItem(k, v); }        catch {} }
@@ -8935,23 +8941,83 @@ async function initWatchlist() {
   updateWatchlistBadge();
 }
 
+// Called from the Firebase Auth module script when a user signs in/out.
+// Firestore takes over as the sync mode automatically — no token, no setup
+// step. If the user already had a local/guest watchlist (e.g. items added
+// before signing in), it's uploaded once so nothing is lost.
+async function wlSaveFirestore() {
+  if (!wlUID || typeof window.fsSaveWatchlist !== 'function') return false;
+  return await window.fsSaveWatchlist(wlUID, wlList);
+}
+
+window.wlOnSignIn = async function (uid, email) {
+  wlUID = uid; wlEmail = email || '';
+  if (typeof window.fsLoadWatchlist !== 'function') return; // Firestore bridge not ready yet
+  const remote = await window.fsLoadWatchlist(uid);
+  if (remote === undefined) {
+    // Firestore read failed (offline, rules misconfigured, etc.) — fall back
+    // to local storage rather than silently showing an empty watchlist.
+    wlMode = 'local';
+    wlList = wlReadLocal();
+  } else if (remote === null) {
+    // No Firestore watchlist yet for this account — migrate any existing
+    // local/guest watchlist up so first-time sign-ins don't lose items.
+    const localList = wlReadLocal();
+    wlList = localList;
+    wlMode = 'firestore';
+    if (localList.length) await wlSaveFirestore();
+  } else {
+    wlList = remote;
+    wlMode = 'firestore';
+  }
+  updateWatchlistBadge();
+  if (document.getElementById('tab-watchlist')?.classList.contains('active')) showWatchlistPanel();
+  // If the "only my watchlist" alert filter is on, the very first alert check
+  // (fired synchronously on sign-in, before this async load finished) may
+  // have used a stale/empty watchlist. Re-check now that it's loaded. Skipped
+  // when the filter is off, since the result wouldn't change and would just
+  // re-fire a duplicate toast/notification.
+  if (document.getElementById('alertsWatchlistOnlyToggle')?.checked) {
+    window.checkFreshSignalsToday?.();
+  }
+};
+
+window.wlOnSignOut = function () {
+  wlUID = null; wlEmail = null;
+  wlMode = 'local';
+  wlList = wlReadLocal();
+  updateWatchlistBadge();
+};
+
+// Bridge for the Alerts panel (defined in the separate Firebase Auth module
+// script, which can't see this script's `let`/`const` variables directly).
+window.getWatchlistTickers = function () { return wlList.slice(); };
+
 function showWatchlistPanel() {
   const setup   = document.getElementById('wlSetupPanel');
   const github  = document.getElementById('wlConnectedPanel');
   const guest   = document.getElementById('wlGuestPanel');
+  const syncNote = document.getElementById('wlSyncNote');
   if (wlMode === 'github') {
     setup.style.display  = 'none';
     github.style.display = 'block';
     guest.style.display  = 'none';
     document.getElementById('wlUserLabel').textContent = '@' + (wlUsername || '');
     loadWatchlistFromGist();
-  } else {
-    setup.style.display  = 'none';
-    github.style.display = 'none';
-    guest.style.display  = 'block';
-    wlList = wlReadLocal();
-    updateWatchlistBadge();
-    renderWatchlist('guest');
+    return;
+  }
+  setup.style.display  = 'none';
+  github.style.display = 'none';
+  guest.style.display  = 'block';
+  if (wlMode === 'local') wlList = wlReadLocal();
+  updateWatchlistBadge();
+  renderWatchlist('guest');
+  if (syncNote) {
+    if (wlMode === 'firestore') {
+      syncNote.innerHTML = `✓ Synced to your account${wlEmail ? ' (' + wlEmail + ')' : ''}`;
+    } else {
+      syncNote.innerHTML = 'Saved in this browser only — <span onclick="wlShowConnect()" style="color:var(--accent3); cursor:pointer; text-decoration:underline;">Connect GitHub to sync across devices →</span>';
+    }
   }
 }
 
@@ -9084,14 +9150,16 @@ async function addToWatchlist(ticker) {
   updateWatchlistBadge();
   showToast(`⭐ ${ticker} added to watchlist`);
   if (wlMode === 'github') { renderWatchlist('github'); await saveWatchlistToGist(); }
-  else                     { wlWriteLocal(wlList); renderWatchlist('guest'); }
+  else if (wlMode === 'firestore') { renderWatchlist('guest'); await wlSaveFirestore(); }
+  else { wlWriteLocal(wlList); renderWatchlist('guest'); }
 }
 
 async function removeFromWatchlist(ticker) {
   wlList = wlList.filter(t => t !== String(ticker));
   updateWatchlistBadge();
   if (wlMode === 'github') { renderWatchlist('github'); await saveWatchlistToGist(); }
-  else                     { wlWriteLocal(wlList); renderWatchlist('guest'); }
+  else if (wlMode === 'firestore') { renderWatchlist('guest'); await wlSaveFirestore(); }
+  else { wlWriteLocal(wlList); renderWatchlist('guest'); }
 }
 
 async function clearWatchlist() {
@@ -9100,7 +9168,8 @@ async function clearWatchlist() {
   wlList = [];
   updateWatchlistBadge();
   if (wlMode === 'github') { renderWatchlist('github'); await saveWatchlistToGist(); }
-  else                     { wlWriteLocal(wlList); renderWatchlist('guest'); }
+  else if (wlMode === 'firestore') { renderWatchlist('guest'); await wlSaveFirestore(); }
+  else { wlWriteLocal(wlList); renderWatchlist('guest'); }
 }
 
 function updateWatchlistBadge() {
@@ -10412,7 +10481,7 @@ function topFmtNum(v) {
 }
 function topScoreColor(sc) {
   const n = parseFloat(sc);
-  return n >= 100 ? 'var(--success)' : n >= 70 ? 'var(--warn)' : 'var(--danger)';
+  return n >= 80 ? 'var(--success)' : n >= 40 ? 'var(--warn)' : 'var(--danger)';
 }
 function topPctColor(v) {
   return parseFloat(v) >= 0 ? 'var(--success)' : 'var(--danger)';
@@ -10749,6 +10818,12 @@ const _origToggleTechnical = toggleTechnical;
     GoogleAuthProvider,
     signInWithPopup
   } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+  import {
+    getFirestore,
+    doc,
+    getDoc,
+    setDoc
+  } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
   // ===== ADMIN ALLOWLIST =====
   // Only signed-in users whose email is in this list see the Data menu
@@ -10768,6 +10843,33 @@ const _origToggleTechnical = toggleTechnical;
   };
 
   const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // ===== Watchlist sync bridge (Firestore) =====
+  // The watchlist UI/state lives in a separate, non-module <script> earlier in
+  // this file (it predates Firebase Auth and doesn't import any SDK). Rather
+  // than duplicate Firestore imports there, we expose two small async
+  // functions on window that it can call directly. Each user's watchlist is
+  // stored at users/{uid}/data/watchlist — see the matching security rule
+  // note further down.
+  window.fsLoadWatchlist = async function (uid) {
+    try {
+      const snap = await getDoc(doc(db, 'users', uid, 'data', 'watchlist'));
+      return snap.exists() ? (snap.data().tickers || []) : null; // null = no doc yet
+    } catch (e) {
+      console.error('Firestore load watchlist failed:', e);
+      return undefined; // undefined = read failed (distinct from "no doc yet")
+    }
+  };
+  window.fsSaveWatchlist = async function (uid, tickers) {
+    try {
+      await setDoc(doc(db, 'users', uid, 'data', 'watchlist'), { tickers, updatedAt: Date.now() });
+      return true;
+    } catch (e) {
+      console.error('Firestore save watchlist failed:', e);
+      return false;
+    }
+  };
 
   // ===== Auto-refresh on return =====
   // Data is baked into this HTML at publish time, so the only way to pick up
@@ -10882,6 +10984,16 @@ const _origToggleTechnical = toggleTechnical;
   // ===== "New initial buying" alerts: fresh buy signals dated today =====
   // A stock counts as a fresh signal today if its Signal Status starts with
   // "Fresh buy signal" and its Signal date (YYYYMMDD) matches today's date.
+  const ALERTS_WL_ONLY_KEY = 'psx_alerts_watchlist_only';
+  const watchlistOnlyToggle = document.getElementById('alertsWatchlistOnlyToggle');
+  if (watchlistOnlyToggle) {
+    watchlistOnlyToggle.checked = localStorage.getItem(ALERTS_WL_ONLY_KEY) === '1';
+    watchlistOnlyToggle.addEventListener('change', () => {
+      try { localStorage.setItem(ALERTS_WL_ONLY_KEY, watchlistOnlyToggle.checked ? '1' : '0'); } catch {}
+      checkFreshSignalsToday();
+    });
+  }
+
   function getTodayYYYYMMDD() {
     const d = new Date();
     return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
@@ -10890,11 +11002,17 @@ const _origToggleTechnical = toggleTechnical;
   function findFreshSignalsToday() {
     if (typeof SOURCE_DATA === 'undefined' || !Array.isArray(SOURCE_DATA)) return [];
     const today = getTodayYYYYMMDD();
-    return SOURCE_DATA.filter(d =>
+    let signals = SOURCE_DATA.filter(d =>
       d['Signal date'] === today &&
       typeof d['Signal Status'] === 'string' &&
       d['Signal Status'].indexOf('Fresh buy signal') === 0
     );
+    const watchlistOnly = watchlistOnlyToggle?.checked;
+    if (watchlistOnly && typeof window.getWatchlistTickers === 'function') {
+      const tickers = new Set(window.getWatchlistTickers());
+      signals = signals.filter(d => tickers.has(String(d.Ticker)));
+    }
+    return signals;
   }
 
   function renderAlertsPanel(signals) {
@@ -10969,6 +11087,7 @@ const _origToggleTechnical = toggleTechnical;
     }
     renderAlertsPanel(signals);
   }
+  window.checkFreshSignalsToday = checkFreshSignalsToday;
 
 
   const googleBtn = document.getElementById('authGoogleBtn');
@@ -11005,6 +11124,7 @@ const _origToggleTechnical = toggleTechnical;
       const adminControlsEl = document.getElementById('adminControls');
       if (adminControlsEl) adminControlsEl.style.display = isAdmin ? 'flex' : 'none';
       checkFreshSignalsToday();
+      if (typeof window.wlOnSignIn === 'function') window.wlOnSignIn(user.uid, email);
     } else {
       document.body.classList.add('authgate-locked');
       overlay.classList.remove('hidden');
@@ -11015,6 +11135,7 @@ const _origToggleTechnical = toggleTechnical;
       alertsPanel.classList.add('hidden');
       const toast = document.getElementById('alertToast');
       if (toast) toast.remove();
+      if (typeof window.wlOnSignOut === 'function') window.wlOnSignOut();
     }
   });
 </script>
