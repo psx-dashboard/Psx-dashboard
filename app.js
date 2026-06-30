@@ -24,6 +24,13 @@
 
 // ===== EMBEDDED DATA =====
 const SOURCE_DATA = [];
+// Explicitly aliased onto window: auth.js is a separate <script type="module">
+// file, and module scripts cannot see a classic script's top-level const/let
+// bindings as bare identifiers — only window properties (or var/function
+// declarations, which auto-attach to window) are visible across that
+// boundary. SOURCE_DATA is only ever mutated in place (.push/.length=0,
+// never reassigned — it's const), so this single alias stays correct forever.
+window.SOURCE_DATA = SOURCE_DATA;
 
 // ===== SECTOR_DATA: read directly from SectorAnalysis sheet on upload =====
 function parseSectorSheet(wb) {

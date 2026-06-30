@@ -200,7 +200,11 @@
   }
 
   function findFreshSignalsToday() {
-    if (typeof SOURCE_DATA === 'undefined' || !Array.isArray(SOURCE_DATA) || !SOURCE_DATA.length) return [];
+    // Read via window.SOURCE_DATA, not the bare identifier — SOURCE_DATA is
+    // declared with const in app.js (a classic script), and module scripts
+    // cannot see another script's top-level const/let bindings directly,
+    // only true window properties (which app.js explicitly exposes this as).
+    if (typeof window.SOURCE_DATA === 'undefined' || !Array.isArray(window.SOURCE_DATA) || !window.SOURCE_DATA.length) return [];
     if (typeof sigStatusCode !== 'function') return []; // signal-status helpers not loaded yet
 
     const baseline = readStatusBaseline();
@@ -208,7 +212,7 @@
     const newBaseline = {};
     let signals = [];
 
-    SOURCE_DATA.forEach(d => {
+    window.SOURCE_DATA.forEach(d => {
       const ticker = String(d.Ticker || '');
       if (!ticker) return;
       const code = sigStatusCode(d['Signal Status']);
