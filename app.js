@@ -320,6 +320,16 @@ function loadTicker(ticker) {
   const d = SOURCE_DATA.find(r => String(r.Ticker) === String(ticker));
   if (!d) return;
 
+  // Single source of truth for the "Selected: TICKER" label. Previously this
+  // was only set inside pickTicker() (the manual search-selection path), so
+  // the automatic first-ticker load in init() — which calls loadTicker()
+  // directly — never updated it, leaving it stuck on its static HTML
+  // placeholder forever. That stale value then fed into the EPS Trend / KPI
+  // Summary header badges (which read from this label), showing the wrong
+  // ticker even though the rest of Company View was correct.
+  const tickerLabelEl = document.getElementById('currentTickerLabel');
+  if (tickerLabelEl) tickerLabelEl.innerHTML = 'Selected: <span>' + ticker + '</span>';
+
   // Same badges shown next to the ticker in the Stock Screener table
   setHTML('ciTickerBadges', tickerBadges(d));
 
@@ -447,6 +457,12 @@ function loadTicker(ticker) {
   // YTD peer comparison chart
   buildPeerScoreChart(ticker, d.Sector);
   buildPeerYTDChart(ticker, d.Sector);
+
+  // Sync the EPS Trend / KPI Summary header badges immediately rather than
+  // waiting for their background poll (every 800ms-1000ms) to catch up —
+  // that poll is now just a defensive fallback, not the primary mechanism.
+  if (typeof updateKpiBadge === 'function') updateKpiBadge();
+  if (typeof updateEPSHeader === 'function') updateEPSHeader();
 }
 
 // ===== CHARTS =====
@@ -2941,29 +2957,27 @@ async function copyShareLink() {
 }
 
 // ===== KPI SUMMARY TICKER + SCORE BADGE =====
-(function(){
-  const updateKpiBadge = () => {
-    try {
-      const ticker = (document.getElementById('currentTickerLabel')?.querySelector('span')?.textContent || '').trim();
-      const score  = parseFloat(document.getElementById('ciScore')?.textContent) || 0;
-      const tickerEl = document.getElementById('kpiTickerBadge');
-      const scoreEl  = document.getElementById('kpiScoreBadge');
-      if (!tickerEl || !scoreEl) return;
-      tickerEl.textContent = ticker;
-      const sc = score >= 80 ? 'var(--success)' : score >= 40 ? 'var(--warn)' : 'var(--danger)';
-      scoreEl.innerHTML = `• <span style="color:${sc};font-weight:700">Fin. Score ${score}</span>`;
+function updateKpiBadge() {
+  try {
+    const ticker = (document.getElementById('currentTickerLabel')?.querySelector('span')?.textContent || '').trim();
+    const score  = parseFloat(document.getElementById('ciScore')?.textContent) || 0;
+    const tickerEl = document.getElementById('kpiTickerBadge');
+    const scoreEl  = document.getElementById('kpiScoreBadge');
+    if (!tickerEl || !scoreEl) return;
+    tickerEl.textContent = ticker;
+    const sc = score >= 80 ? 'var(--success)' : score >= 40 ? 'var(--warn)' : 'var(--danger)';
+    scoreEl.innerHTML = `• <span style="color:${sc};font-weight:700">Fin. Score ${score}</span>`;
 
-      // Also sync share menu button ticker badge
-      const shareMenuTitle = document.getElementById('shareMenuTitle');
-      if (shareMenuTitle && document.getElementById('shareMenu').style.display === 'none') {
-        shareMenuTitle.innerHTML = `Share <span style="color:var(--accent3)">${ticker}</span> · Fin. Score <span style="color:${sc}">${score}</span>`;
-      }
-    } catch(e) {}
-  };
-  updateKpiBadge();
-  setInterval(updateKpiBadge, 800);
-  window.addEventListener('load', updateKpiBadge);
-})();
+    // Also sync share menu button ticker badge
+    const shareMenuTitle = document.getElementById('shareMenuTitle');
+    if (shareMenuTitle && document.getElementById('shareMenu').style.display === 'none') {
+      shareMenuTitle.innerHTML = `Share <span style="color:var(--accent3)">${ticker}</span> · Fin. Score <span style="color:${sc}">${score}</span>`;
+    }
+  } catch(e) {}
+}
+updateKpiBadge();
+setInterval(updateKpiBadge, 800);
+window.addEventListener('load', updateKpiBadge);
 
 
 // ===== THEME TOGGLE =====
@@ -3034,28 +3048,25 @@ function toggleTheme() {
 
 
 
-(function(){
-  const updateEPSHeader = () => {
-    try{
-      const ticker = (document.getElementById('currentTickerLabel')?.querySelector('span')?.textContent || '').trim();
-      const scoreEl = document.getElementById('ciScore');
-      const labelEl = document.getElementById('chartEPSLabel');
-      if(!labelEl || !scoreEl) return;
+function updateEPSHeader() {
+  try{
+    const ticker = (document.getElementById('currentTickerLabel')?.querySelector('span')?.textContent || '').trim();
+    const scoreEl = document.getElementById('ciScore');
+    const labelEl = document.getElementById('chartEPSLabel');
+    if(!labelEl || !scoreEl) return;
 
-      const score = parseFloat(scoreEl.textContent) || 0;
-      let color = '#ff4757';
-      if(score >= 80) color = '#2ed573';
-      else if(score >= 40) color = '#f5a623';
+    const score = parseFloat(scoreEl.textContent) || 0;
+    let color = '#ff4757';
+    if(score >= 80) color = '#2ed573';
+    else if(score >= 40) color = '#f5a623';
 
-      labelEl.innerHTML =
-        `<span style="color:#4d94ff">${ticker}</span> • <span style="color:${color};font-weight:700">Fin. Score ${score}</span>`;
-    }catch(e){}
-  };
-
-  updateEPSHeader();
-  setInterval(updateEPSHeader, 1000);
-  window.addEventListener('load', updateEPSHeader);
-})();
+    labelEl.innerHTML =
+      `<span style="color:#4d94ff">${ticker}</span> • <span style="color:${color};font-weight:700">Fin. Score ${score}</span>`;
+  }catch(e){}
+}
+updateEPSHeader();
+setInterval(updateEPSHeader, 1000);
+window.addEventListener('load', updateEPSHeader);
 
 
 
