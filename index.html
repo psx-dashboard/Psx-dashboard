@@ -9252,6 +9252,12 @@ let wlSaving   = false;
 let wlMode     = 'local'; // 'local' | 'firestore' | 'github'
 let wlUID      = null;
 let wlEmail    = null;
+// Resolves once the post-sign-in Firestore sync (wlOnSignIn) has finished, so
+// that an add/remove/clear right after signing in doesn't race ahead of it
+// and silently save to local storage instead of the user's account. Starts
+// pre-resolved (guest state needs no waiting); reset to a fresh in-flight
+// promise each time a sign-in sync begins.
+let wlReadyPromise = Promise.resolve();
 
 function wlLocalGet(k)    { try { return localStorage.getItem(k); }    catch { return null; } }
 function wlLocalSet(k, v) { try { localStorage.setItem(k, v); }        catch {} }
@@ -9293,42 +9299,46 @@ async function wlSaveFirestore() {
   return await window.fsSaveWatchlist(wlUID, wlList);
 }
 
-window.wlOnSignIn = async function (uid, email) {
-  wlUID = uid; wlEmail = email || '';
-  if (typeof window.fsLoadWatchlist !== 'function') return; // Firestore bridge not ready yet
-  const remote = await window.fsLoadWatchlist(uid);
-  if (remote === undefined) {
-    // Firestore read failed (offline, rules misconfigured, etc.) — fall back
-    // to local storage rather than silently showing an empty watchlist.
-    wlMode = 'local';
-    wlList = wlReadLocal();
-  } else if (remote === null) {
-    // No Firestore watchlist yet for this account — migrate any existing
-    // local/guest watchlist up so first-time sign-ins don't lose items.
-    const localList = wlReadLocal();
-    wlList = localList;
-    wlMode = 'firestore';
-    if (localList.length) await wlSaveFirestore();
-  } else {
-    wlList = remote;
-    wlMode = 'firestore';
-  }
-  updateWatchlistBadge();
-  if (document.getElementById('tab-watchlist')?.classList.contains('active')) showWatchlistPanel();
-  // If the "only my watchlist" alert filter is on, the very first alert check
-  // (fired synchronously on sign-in, before this async load finished) may
-  // have used a stale/empty watchlist. Re-check now that it's loaded. Skipped
-  // when the filter is off, since the result wouldn't change and would just
-  // re-fire a duplicate toast/notification.
-  if (document.getElementById('alertsWatchlistOnlyToggle')?.checked) {
-    window.checkFreshSignalsToday?.();
-  }
+window.wlOnSignIn = function (uid, email) {
+  wlReadyPromise = (async () => {
+    wlUID = uid; wlEmail = email || '';
+    if (typeof window.fsLoadWatchlist !== 'function') return; // Firestore bridge not ready yet
+    const remote = await window.fsLoadWatchlist(uid);
+    if (remote === undefined) {
+      // Firestore read failed (offline, rules misconfigured, etc.) — fall back
+      // to local storage rather than silently showing an empty watchlist.
+      wlMode = 'local';
+      wlList = wlReadLocal();
+    } else if (remote === null) {
+      // No Firestore watchlist yet for this account — migrate any existing
+      // local/guest watchlist up so first-time sign-ins don't lose items.
+      const localList = wlReadLocal();
+      wlList = localList;
+      wlMode = 'firestore';
+      if (localList.length) await wlSaveFirestore();
+    } else {
+      wlList = remote;
+      wlMode = 'firestore';
+    }
+    updateWatchlistBadge();
+    if (document.getElementById('tab-watchlist')?.classList.contains('active')) showWatchlistPanel();
+    // If the "only my watchlist" alert filter is on, the very first alert check
+    // (fired synchronously on sign-in, before this async load finished) may
+    // have used a stale/empty watchlist. Re-check now that it's loaded. Skipped
+    // when the filter is off, since the result wouldn't change and would just
+    // re-fire a duplicate toast/notification.
+    if (document.getElementById('alertsWatchlistOnlyToggle')?.checked) {
+      window.checkFreshSignalsToday?.();
+    }
+  })();
+  return wlReadyPromise;
 };
 
 window.wlOnSignOut = function () {
   wlUID = null; wlEmail = null;
   wlMode = 'local';
   wlList = wlReadLocal();
+  wlReadyPromise = Promise.resolve(); // nothing to wait for once signed out
   updateWatchlistBadge();
 };
 
@@ -9487,6 +9497,11 @@ function disconnectGitHub() {
 }
 
 async function addToWatchlist(ticker) {
+  // Wait for any in-flight post-sign-in Firestore sync to finish first, so a
+  // tap right after signing in doesn't race ahead of it (wlMode would still
+  // read 'local' for a brief moment otherwise, silently saving to this
+  // browser only instead of the user's account).
+  await wlReadyPromise;
   ticker = String(ticker);
   if (wlList.includes(ticker)) { showToast(`${ticker} already in watchlist`); return; }
   wlList.push(ticker);
@@ -9498,6 +9513,7 @@ async function addToWatchlist(ticker) {
 }
 
 async function removeFromWatchlist(ticker) {
+  await wlReadyPromise;
   wlList = wlList.filter(t => t !== String(ticker));
   updateWatchlistBadge();
   if (wlMode === 'github') { renderWatchlist('github'); await saveWatchlistToGist(); }
@@ -9506,6 +9522,7 @@ async function removeFromWatchlist(ticker) {
 }
 
 async function clearWatchlist() {
+  await wlReadyPromise;
   if (!wlList.length) return;
   if (!confirm('Clear your entire watchlist?')) return;
   wlList = [];
