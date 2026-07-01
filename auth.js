@@ -340,6 +340,14 @@
   });
 
   onAuthStateChanged(auth, (user) => {
+    // Auth state is now known — dismiss the splash regardless of outcome.
+    // Fade it out rather than snapping it away so the transition feels smooth.
+    const splash = document.getElementById('splashOverlay');
+    if (splash) {
+      splash.style.opacity = '0';
+      setTimeout(() => { if (splash.parentNode) splash.parentNode.removeChild(splash); }, 420);
+    }
+
     if (user) {
       document.body.classList.remove('authgate-locked');
       overlay.classList.add('hidden');

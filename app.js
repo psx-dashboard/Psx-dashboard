@@ -2009,7 +2009,7 @@ function renderWatchlist(mode) {
         ? `<span class="pill ${sigPill}" style="font-size:10px;padding:2px 7px;text-transform:none;">${sig}</span>`
         : '<span style="color:var(--text3)">—</span>';
       tr.innerHTML = `
-        <td class="ticker-link" onclick="switchTab('company');pickTicker('${ticker}')">${ticker}</td>
+        <td class="ticker-link" onclick="switchTab('company');pickTicker('${ticker}')">${ticker}${tickerBadges(d)}</td>
         <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis">${d.Name||'—'}</td>
         <td class="screener-hide-mobile" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;color:var(--text2)">${d.Sector||'—'}</td>
         <td class="mono"><span class="pill ${score>=80?'pill-good':score>=50?'pill-neutral':'pill-bad'}">${score!=null?score:'—'}</span></td>

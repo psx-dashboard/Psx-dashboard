@@ -19,7 +19,7 @@
      so every document.getElementById(...) call inside it still finds
      its element exactly as before. Only the SDK *download* start time
      changes, not the execution order. -->
-<script type="module" src="auth.js?v=20260630b"></script>
+<script type="module" src="auth.js?v=20260630c"></script>
 <meta name="description" content="Nexus PSX — Where Value Meets Momentum. Track revenue, profit, EBITDA and market performance of Pakistan Stock Exchange listed companies with interactive charts and analytics.">
 
 <!-- Favicon / App Icons (real files, must be uploaded alongside index.html) -->
@@ -39,10 +39,36 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<link rel="stylesheet" href="styles.css?v=20260630b">
+<link rel="stylesheet" href="styles.css?v=20260630c">
 </head>
 <body class="authgate-locked">
-<link rel="stylesheet" href="auth-styles.css?v=20260630b">
+
+<!-- Splash: shown immediately on every page load, covers both the auth gate
+     and the dashboard while Firebase resolves the auth state. Dissolves once
+     onAuthStateChanged fires — whether the user is logged in or not. This
+     prevents the "blank white flash → sign-in form" flicker for returning
+     users who are already authenticated, and also avoids showing a half-loaded
+     dashboard before auth has been checked. -->
+<div id="splashOverlay" style="
+  position: fixed; inset: 0; z-index: 99999;
+  background: var(--bg, #0f1117);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 20px;
+  transition: opacity 0.4s ease;
+">
+  <img src="header-logo.png" alt="Nexus PSX" style="width: 90px; height: auto; opacity: 0.92;">
+  <div style="font-family: 'Inter', -apple-system, sans-serif; font-size: 22px; font-weight: 700; color: #e8e8e8; letter-spacing: 0.5px;">
+    Nexus <span style="color: #c8a96e;">PSX</span>
+  </div>
+  <div style="font-family: 'Inter', -apple-system, sans-serif; font-size: 12px; color: #6b7280; letter-spacing: 1px; margin-top: -8px;">
+    WHERE VALUE MEETS MOMENTUM
+  </div>
+  <div style="margin-top: 12px; width: 36px; height: 36px; border: 3px solid rgba(200,169,110,0.2); border-top-color: #c8a96e; border-radius: 50%; animation: splashSpin 0.8s linear infinite;"></div>
+</div>
+<style>
+  @keyframes splashSpin { to { transform: rotate(360deg); } }
+</style>
+<link rel="stylesheet" href="auth-styles.css?v=20260630c">
 <div id="authOverlay">
   <div class="auth-card">
     <h1 id="authTitle">Sign in</h1>
@@ -1500,7 +1526,7 @@
           </span>
       </div>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-      <script src="app.js?v=20260630b"></script>
+      <script src="app.js?v=20260630c"></script>
       <div class="scroll-table">
         <table class="data-table hide-financials hide-performance hide-daily" id="screenerTable">
           <thead>
