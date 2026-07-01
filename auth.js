@@ -434,7 +434,7 @@
 
     if (user) {
       document.body.classList.remove('authgate-locked');
-      overlay.classList.add('hidden');
+      overlay.style.display = 'none';
       const displayName = user.displayName || '';
       const email = user.email || '';
       const initial = (displayName || email || '?').charAt(0).toUpperCase();
@@ -460,7 +460,9 @@
       if (Notification.permission === 'granted') registerForPush(user.uid);
     } else {
       document.body.classList.add('authgate-locked');
-      overlay.classList.remove('hidden');
+      // Only reveal the sign-in form now that auth has confirmed user is logged out.
+      // It starts hidden (display:none in CSS) so it never flashes for returning users.
+      overlay.style.display = 'block';
       userMenu.style.display = 'none';
       const adminControlsEl2 = document.getElementById('adminControls');
       if (adminControlsEl2) adminControlsEl2.style.display = 'none';

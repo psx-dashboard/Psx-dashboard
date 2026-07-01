@@ -1,6 +1,13 @@
 
   /* ===== AUTH GATE (Firebase) ===== */
-  body.authgate-locked > *:not(#authOverlay) { display: none !important; }
+  /* While auth is resolving, hide everything except the splash screen.
+     The splash sits on top with z-index:99999 and covers the whole page.
+     Once onAuthStateChanged fires:
+       • logged in  → splash fades, dashboard shown, authOverlay stays hidden
+       • logged out → splash fades, authOverlay revealed, dashboard stays hidden */
+  body.authgate-locked > *:not(#authOverlay):not(#splashOverlay) { display: none !important; }
+  /* Auth overlay starts hidden — only revealed when user actually needs to sign in */
+  #authOverlay { display: none; }
   #authOverlay {
     position: fixed; inset: 0; z-index: 99999;
     display: flex; align-items: center; justify-content: center;
