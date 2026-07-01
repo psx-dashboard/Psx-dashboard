@@ -1200,6 +1200,7 @@ const EXTRA_OPTIONS = [
   {value:'mcap_lt_250m',   label:'Market Cap < 250 Million'}
 ];
 const OTHERS_OPTIONS = [
+  {value:'watchlist',  label:'⭐ My Watchlist'},
   {value:'turnaround', label:'🔁 Turnaround Candidates'},
   {value:'net_gt_op',  label:'📊 Net Inc > Op. Inc'}
 ];
@@ -1499,6 +1500,7 @@ function filterScreener() {
 
   const matchesOthers = (d, v) => {
     switch (v) {
+      case 'watchlist':  return (typeof wlList !== 'undefined' ? wlList : []).includes(String(d.Ticker));
       case 'turnaround': return (parseFloat(d['Loss narrow'])||0) > 0;
       case 'net_gt_op':  return (parseFloat(d['NI > OI'])||0) > 0;
       default: return false;
@@ -1881,10 +1883,6 @@ function disconnectGitHub() {
 }
 
 async function addToWatchlist(ticker) {
-  // Wait for any in-flight post-sign-in Firestore sync to finish first, so a
-  // tap right after signing in doesn't race ahead of it (wlMode would still
-  // read 'local' for a brief moment otherwise, silently saving to this
-  // browser only instead of the user's account).
   await wlReadyPromise;
   ticker = String(ticker);
   if (wlList.includes(ticker)) { showToast(`${ticker} already in watchlist`); return; }
@@ -1894,6 +1892,8 @@ async function addToWatchlist(ticker) {
   if (wlMode === 'github') { renderWatchlist('github'); await saveWatchlistToGist(); }
   else if (wlMode === 'firestore') { renderWatchlist('guest'); await wlSaveFirestore(); }
   else { wlWriteLocal(wlList); renderWatchlist('guest'); }
+  // Re-filter screener so "My Watchlist" filter reflects the new state immediately
+  if (mselRegistry.others.selected.has('watchlist')) filterScreener();
 }
 
 async function removeFromWatchlist(ticker) {
@@ -1903,6 +1903,7 @@ async function removeFromWatchlist(ticker) {
   if (wlMode === 'github') { renderWatchlist('github'); await saveWatchlistToGist(); }
   else if (wlMode === 'firestore') { renderWatchlist('guest'); await wlSaveFirestore(); }
   else { wlWriteLocal(wlList); renderWatchlist('guest'); }
+  if (mselRegistry.others.selected.has('watchlist')) filterScreener();
 }
 
 async function clearWatchlist() {
@@ -1914,6 +1915,7 @@ async function clearWatchlist() {
   if (wlMode === 'github') { renderWatchlist('github'); await saveWatchlistToGist(); }
   else if (wlMode === 'firestore') { renderWatchlist('guest'); await wlSaveFirestore(); }
   else { wlWriteLocal(wlList); renderWatchlist('guest'); }
+  if (mselRegistry.others.selected.has('watchlist')) filterScreener();
 }
 
 function updateWatchlistBadge() {
