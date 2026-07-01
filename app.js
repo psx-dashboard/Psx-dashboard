@@ -1151,6 +1151,27 @@ function renderSectorTable(data) {
     tbody.appendChild(tr);
   });
 }
+// Tracks which tickers were auto-added to the Comparison filter by the
+// "My Watchlist" Others filter, so we can remove only those if the user
+// unchecks watchlist (leaving any tickers they manually added in place).
+let _wlAutoAddedToComparison = new Set();
+
+function syncWatchlistToComparison(active) {
+  const wl = typeof wlList !== 'undefined' ? wlList : [];
+  const tickerSel = mselRegistry.ticker.selected;
+  if (active) {
+    // Add watchlist tickers to Comparison and remember which ones we added
+    _wlAutoAddedToComparison = new Set();
+    wl.forEach(t => { tickerSel.add(t); _wlAutoAddedToComparison.add(t); });
+  } else {
+    // Remove only the ones we auto-added; keep anything the user picked manually
+    _wlAutoAddedToComparison.forEach(t => tickerSel.delete(t));
+    _wlAutoAddedToComparison = new Set();
+  }
+  mselRenderList('ticker');
+  mselUpdateLabel('ticker');
+}
+
 function filterSectorTable() {
   const sel = mselRegistry.sectorFilter.selected;
   const filtered = sel.size > 0
@@ -1350,6 +1371,9 @@ function mselToggleItem(key, value, checked) {
   if (!cfg) return;
   if (checked) cfg.selected.add(value); else cfg.selected.delete(value);
   mselUpdateLabel(key);
+  // When the "My Watchlist" Others filter is toggled, mirror watchlist tickers
+  // into the Comparison filter so the user can extend the selection freely.
+  if (key === 'others' && value === 'watchlist') syncWatchlistToComparison(checked);
   (cfg.onChange || filterScreener)();
 }
 
@@ -1540,13 +1564,27 @@ function filterScreener() {
       for (const v of selExtra) { if (matchesExtra(d, v)) { matched = true; break; } }
       if (!matched) return false;
     }
-    if (selOthers.size > 0) {
-      let matched = false;
-      for (const v of selOthers) { if (matchesOthers(d, v)) { matched = true; break; } }
-      if (!matched) return false;
+    // Others + Comparison (ticker) are evaluated together when "My Watchlist"
+    // is active, using OR logic: show the stock if it passes any Others filter
+    // OR if it's manually selected in Comparison. This lets the user extend
+    // the watchlist view with extra stocks rather than restricting it further.
+    // When watchlist is NOT active, both filters apply independently (AND).
+    const wlActive = selOthers.has('watchlist');
+    if (selOthers.size > 0 || selTickers.size > 0) {
+      const inComparison = selTickers.size > 0 && selTickers.has(String(d.Ticker));
+      if (wlActive && inComparison) {
+        // Stock is explicitly in Comparison — always pass regardless of Others
+      } else if (selOthers.size > 0) {
+        let othersMatched = false;
+        for (const v of selOthers) { if (matchesOthers(d, v)) { othersMatched = true; break; } }
+        if (!othersMatched) return false;
+        // Passed Others — now check Comparison (AND logic when no extra union needed)
+        if (!wlActive && selTickers.size > 0 && !inComparison) return false;
+      } else if (selTickers.size > 0 && !inComparison) {
+        return false;
+      }
     }
     if (selSectors.size > 0 && !selSectors.has(d.Sector)) return false;
-    if (selTickers.size > 0 && !selTickers.has(String(d.Ticker))) return false;
     if (selIndices.size > 0) {
       const dIdx = String(d.Index||'');
       let matched = false;
