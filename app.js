@@ -1457,11 +1457,11 @@ document.addEventListener('keydown', function(e) {
 });
 // Close any open filter panel on scroll/resize rather than letting it drift
 // out of place now that it's positioned relative to the viewport.
-// Exception: index/sector panels have long scrollable checkbox lists for
-// multi-selecting several items (common on mobile), so scrolling inside them
-// must NOT close them. They still close via outside click, the toggle
-// button, or Escape — just not from scroll/resize.
-const NO_SCROLL_CLOSE = new Set(['index', 'sector', 'ticker']);
+// Exception: index/sector/ticker/sectorFilter panels have long scrollable
+// checkbox lists for multi-selecting several items (common on mobile), so
+// scrolling inside them must NOT close them. They still close via outside
+// click, the toggle button, or Escape — just not from scroll/resize.
+const NO_SCROLL_CLOSE = new Set(['index', 'sector', 'ticker', 'sectorFilter']);
 window.addEventListener('scroll', function() {
   if (Date.now() - mselOpenedAt < 400) return;
   Object.keys(mselRegistry).forEach(key => {
@@ -1478,6 +1478,18 @@ window.addEventListener('resize', function() {
     document.getElementById(key + 'MselBtn')?.classList.remove('open');
   });
 });
+
+// On mobile, tapping a checkbox inside an msel panel fires a touchstart →
+// touchend → click sequence. The synthetic click can bubble up to the
+// document 'click' outside-handler above and close the panel before the
+// checkbox state even settles. Stopping propagation on touchstart inside any
+// open msel panel prevents this without affecting the checkbox interaction.
+document.addEventListener('touchstart', function(e) {
+  const openPanel = document.querySelector('.msel-panel.open');
+  if (openPanel && openPanel.contains(e.target)) {
+    e.stopPropagation();
+  }
+}, { passive: false });
 
 function resetMselFilters() {
   Object.keys(mselRegistry).forEach(key => {
